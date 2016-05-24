@@ -24,6 +24,6 @@ This current library fixes these problems with a simple light weight architectur
 - a far more logical organization of operations implemented by PDO
 - resultset parsers
 
-This API is <i>conceptual</i> part of SQL Suites, an integrated solution designed to cover all aspects of communication with SQL servers. To see the full documentation, please visit to SQL suites docs :
+This API, even though totally decoupled, is <i>conceptual</i> part of SQL Suites, an integrated solution designed to cover all aspects of communication with SQL servers. To see the full documentation, please visit to SQL suites docs :
 
 https://docs.google.com/document/d/1U5PtPyub4t273gB9gXoZTX7TQasjP6lj93kMcClovS4/edit# 
