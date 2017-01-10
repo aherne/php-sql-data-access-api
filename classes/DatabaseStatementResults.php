@@ -81,10 +81,8 @@ class DatabaseStatementResults {
 	 * @return array
 	 */
 	public function toMap($strColumnKeyName, $strColumnValueName) {
-		$tblTMP = $this->PDOStatement->fetchAll(PDO::FETCH_ASSOC);
-		if(!sizeof($tblTMP)) return array();
 		$tblOutput=array();
-		foreach($tblTMP as $tblRow) {
+		while($tblRow = $this->PDOStatement->fetch(PDO::FETCH_ASSOC)) {
 			$tblOutput[$tblRow[$strColumnKeyName]]=$tblRow[$strColumnValueName];
 		}
 		return $tblOutput;
