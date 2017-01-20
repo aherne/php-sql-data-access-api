@@ -1,8 +1,8 @@
 <?php
 /**
- * Implements a database connection singleton on top of DatabaseConnection object. Useful when your application works with only one database server.
+ * Implements a database connection singleton on top of SQLConnection object. Useful when your application works with only one database server.
  */
-final class DatabaseConnectionSingleton
+final class SQLConnectionSingleton
 {
     /**
      * @var DataSource
@@ -10,54 +10,54 @@ final class DatabaseConnectionSingleton
     private static $dataSource = null;
     
     /**
-     * @var DatabaseConnectionSingleton
+     * @var SQLConnectionSingleton
      */
     private static $instance = null;
     
     /**
-     * @var DatabaseConnection
+     * @var SQLConnection
      */
     private $database_connection = null;
     
     /**
      * Registers a data source object encapsulatings connection info.
      * 
-     * @param DataSource $dataSource
+     * @param SQLDataSource $dataSource
      */
-    public static function setDataSource(DataSource $dataSource)
+    public static function setDataSource(SQLDataSource $dataSource)
     {
         self::$dataSource = $dataSource;
     }
         
     /**
-	 * Opens connection to database server (if not already open) according to DataSource and returns a DatabaseConnection object. 
+	 * Opens connection to database server (if not already open) according to SQLDataSource and returns a SQLConnection object. 
      * 
-     * @return DatabaseConnection
+     * @return SQLConnection
      */
     public static function getInstance() 
     {
         if(self::$instance) {
             return self::$instance->getConnection();
         }
-        self::$instance = new DatabaseConnectionSingleton();
+        self::$instance = new SQLConnectionSingleton();
         return self::$instance->getConnection();
     }
     
     /**
      * Connects to database automatically.
      * 
-     * @throws DatabaseException
+     * @throws SQLException
      */
     private function __construct() {
-		if(!self::$dataSource) throw new DatabaseException("Datasource not set!");
-        $this->database_connection = new DatabaseConnection();
+		if(!self::$dataSource) throw new SQLException("Datasource not set!");
+        $this->database_connection = new SQLConnection();
         $this->database_connection->connect(self::$dataSource);
     }
     
     /**
      * Internal utility to get connection.
      * 
-     * @return DatabaseConnection
+     * @return SQLConnection
      */
     private function getConnection()
     {

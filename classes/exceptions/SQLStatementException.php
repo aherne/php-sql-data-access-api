@@ -1,5 +1,5 @@
 <?php
-class DatabaseStatementException extends Exception {
+class SQLStatementException extends Exception {
 	protected $query;
 	 
 	public function __construct($strErrorMessage, $intErrorId, $strQuery) {

@@ -1,5 +1,5 @@
 <?php
-class DatabaseTransaction {
+class SQLTransaction {
 	/**
 	 * Variable containing a PDO instance this class relies on.
 	 * 

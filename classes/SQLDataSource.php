@@ -2,7 +2,7 @@
 /**
  * Implements a data source.
 */
-class DataSource {
+class SQLDataSource {
 	private $strDriverName;
 	private $tblDriverOptions;
 	private $strHost;
