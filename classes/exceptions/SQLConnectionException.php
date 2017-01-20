@@ -1,5 +1,5 @@
 <?php
-class DatabaseConnectionException extends Exception {
+class SQLConnectionException extends Exception {
 	protected $strHostName="";
 	
 	public function __construct($strMessage, $intErrorCode, $strHostName) {

@@ -2,7 +2,7 @@
 /**
  * Implements a database prepared statement on top of PDO.
  */
-class DatabasePreparedStatement {
+class SQLPreparedStatement {
 	/**
 	 * Variable containing an instance of PDO class.
 	 * 
@@ -49,26 +49,26 @@ class DatabasePreparedStatement {
 	 * @param string $strParameter
 	 * @param mixed $mixValue
 	 * @param integer $intDataType
-	 * @throws DatabaseException
+	 * @throws SQLException
 	 */
 	public function bind($strParameter, $mixValue, $intDataType=PDO::PARAM_STR) {
-		if(!$this->strPendingStatement) throw new DatabaseException("Cannot bind anything on a statement that hasn't been prepared!");
+		if(!$this->strPendingStatement) throw new SQLException("Cannot bind anything on a statement that hasn't been prepared!");
 		$this->PDOStatement->bindValue($strParameter, $mixValue, $intDataType);
 	}
 	
 	/**
 	 * Executes a prepared statement.
 	 * 
-	 * @return DatabaseStatementResults
-	 * @throws DatabaseStatementException
+	 * @return SQLStatementResults
+	 * @throws SQLStatementException
 	 */
 	public function execute() {
-		if(!$this->strPendingStatement) throw new DatabaseException("Cannot execute a statement that hasn't been prepared!");
+		if(!$this->strPendingStatement) throw new SQLException("Cannot execute a statement that hasn't been prepared!");
 		try {
 			$this->PDOStatement->execute();
 		} catch(PDOException $e) {
-			throw new DatabaseStatementException($e->getMessage(), $e->getCode(), $this->strPendingStatement);
+			throw new SQLStatementException($e->getMessage(), $e->getCode(), $this->strPendingStatement);
 		}
-		return new DatabaseStatementResults($this->PDO, $this->PDOStatement);
+		return new SQLStatementResults($this->PDO, $this->PDOStatement);
 	}
 }

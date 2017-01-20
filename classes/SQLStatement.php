@@ -2,7 +2,7 @@
 /**
  * Implements a database statement on top of PDO.
  */
-class DatabaseStatement {
+class SQLStatement {
 	/**
 	 * Variable containing an instance of PDO class.
 	 * 
@@ -33,16 +33,16 @@ class DatabaseStatement {
 	 * Executes a query.
 	 * 
 	 * @param string $strQuery
-	 * @throws DatabaseStatementException
-	 * @return DatabaseStatementResults
+	 * @throws SQLStatementException
+	 * @return SQLStatementResults
 	 */
 	public function execute($strQuery) {
 		$stmt=null;
 		try {
 			$stmt = $this->PDO->query($strQuery);
 		} catch(PDOException $e) {
-			throw new DatabaseStatementException($e->getMessage(), $e->getCode(), $strQuery);
+			throw new SQLStatementException($e->getMessage(), $e->getCode(), $strQuery);
 		}
-		return new DatabaseStatementResults($this->PDO, $stmt);
+		return new SQLStatementResults($this->PDO, $stmt);
 	}
 }

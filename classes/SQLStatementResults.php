@@ -2,7 +2,7 @@
 /**
  * Implements statement results parsiong on top of PDO.
  */
-class DatabaseStatementResults {
+class SQLStatementResults {
 	/**
 	 * Variable containing an instance of PDO class.
 	 * 

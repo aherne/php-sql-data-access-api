@@ -2,7 +2,7 @@
 /**
  * Implements a database connection on top of PDO.
 */
-class DatabaseConnection {
+class SQLConnection {
 	/**
 	 * Variable containing an instance of PDO class.
 	 *
@@ -11,17 +11,17 @@ class DatabaseConnection {
 	protected $PDO;
 
 	/**
-	 * Variable containing an instance of DataSource class saved to be used in keep alive.
+	 * Variable containing an instance of SQLDataSource class saved to be used in keep alive.
 	 *
-	 * @var DataSource
+	 * @var SQLDataSource
 	 */
 	protected $objDataSource;
 
 	/**
 	 * Opens connection to database server.
 	 *
-	 * @param DataSource $objDataSource
-	 * @throws DatabaseConnectionException
+	 * @param SQLDataSource $objDataSource
+	 * @throws SQLConnectionException
 	 */
 	public function connect($objDataSource) {
 		// open connection
@@ -35,7 +35,7 @@ class DatabaseConnection {
 			$this->PDO = new PDO($objDataSource->getDriverName().$settings, $objDataSource->getUserName(), $objDataSource->getPassword(), $objDataSource->getDriverOptions());
 			$this->PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		} catch(PDOException $e) {
-			throw new DatabaseConnectionException($e->getMessage(), $e->getCode(), $objDataSource->getHost());
+			throw new SQLConnectionException($e->getMessage(), $e->getCode(), $objDataSource->getHost());
 		}
 
 		// saves datasource
@@ -46,10 +46,10 @@ class DatabaseConnection {
 	 * Restores connection to database server in case it got closed unexpectedly.
 	 */
 	public function keepAlive() {
-		$objStatement = new DatabaseStatement($this->PDO);
+		$objStatement = new SQLStatement($this->PDO);
 		try {
 			$objStatement->execute("SELECT 1");
-		} catch(DatabaseStatementException $e) {
+		} catch(SQLStatementException $e) {
 			$this->connect($this->objDataSource);
 		}
 	}
@@ -67,29 +67,29 @@ class DatabaseConnection {
 	 * Operates with transactions on current connection.
 	 * NOTE: this does not automatically start a transaction. To do that, call begin method.
 	 *
-	 * @return DatabaseTransaction
+	 * @return SQLTransaction
 	 */
 	public function transaction() {
-		return new DatabaseTransaction($this->PDO);
+		return new SQLTransaction($this->PDO);
 	}
 
 	/**
 	 * Creates a statement on current connection.
 	 *
-	 * @return DatabaseStatement
+	 * @return SQLStatement
 	 */
 	public function createStatement() {
-		return new DatabaseStatement($this->PDO);
+		return new SQLStatement($this->PDO);
 	}
 
 
 	/**
 	 * Creates a prepared statement on current connection.
 	 *
-	 * @return DatabasePreparedStatement
+	 * @return SQLPreparedStatement
 	 */
 	public function createPreparedStatement() {
-		return new DatabasePreparedStatement($this->PDO);
+		return new SQLPreparedStatement($this->PDO);
 	}
 
 	/**
