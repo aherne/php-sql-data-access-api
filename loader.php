@@ -5,5 +5,7 @@ require_once("classes/SQLPreparedStatement.php");
 require_once("classes/SQLStatementResults.php");
 require_once("classes/SQLTransaction.php");
 require_once("classes/SQLDataSource.php");
+require_once("classes/SQLConnectionFactory.php");
+require_once("classes/SQLConnectionSingleton.php");
 require_once("classes/exceptions/SQLConnectionException.php");
 require_once("classes/exceptions/SQLStatementException.php");
