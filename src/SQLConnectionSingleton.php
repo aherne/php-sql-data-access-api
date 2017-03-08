@@ -46,10 +46,10 @@ final class SQLConnectionSingleton
     /**
      * Connects to database automatically.
      * 
-     * @throws SQLConnectionException
+     * @throws SQLException
      */
     private function __construct() {
-		if(!self::$dataSource) throw new SQLConnectionException("Datasource not set!");
+		if(!self::$dataSource) throw new SQLException("Datasource not set!");
         $this->database_connection = new SQLConnection();
         $this->database_connection->connect(self::$dataSource);
     }

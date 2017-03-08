@@ -7,5 +7,6 @@ require_once("src/SQLTransaction.php");
 require_once("src/SQLDataSource.php");
 require_once("src/SQLConnectionFactory.php");
 require_once("src/SQLConnectionSingleton.php");
+require_once("src/exceptions/SQLException.php");
 require_once("src/exceptions/SQLConnectionException.php");
 require_once("src/exceptions/SQLStatementException.php");
