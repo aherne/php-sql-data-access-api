@@ -51,10 +51,10 @@ final class SQLConnectionFactory {
 	/**
 	 * Connects to database automatically.
 	 *
-	 * @throws SQLConnectionException
+	 * @throws SQLException
 	 */
 	private function __construct($strServerName) {
-		if(!isset(self::$dataSources[$strServerName])) throw new SQLConnectionException("Datasource not set for: ".$strServerName);
+		if(!isset(self::$dataSources[$strServerName])) throw new SQLException("Datasource not set for: ".$strServerName);
 		$this->database_connection = new SQLConnection();
 		$this->database_connection->connect(self::$dataSources[$strServerName]);
 	}
