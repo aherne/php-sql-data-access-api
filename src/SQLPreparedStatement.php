@@ -49,10 +49,10 @@ class SQLPreparedStatement {
 	 * @param string $strParameter
 	 * @param mixed $mixValue
 	 * @param integer $intDataType
-	 * @throws SQLException
+	 * @throws SQLStatementException
 	 */
 	public function bind($strParameter, $mixValue, $intDataType=PDO::PARAM_STR) {
-		if(!$this->strPendingStatement) throw new SQLException("Cannot bind anything on a statement that hasn't been prepared!");
+		if(!$this->strPendingStatement) throw new SQLStatementException("Cannot bind anything on a statement that hasn't been prepared!");
 		$this->PDOStatement->bindValue($strParameter, $mixValue, $intDataType);
 	}
 	
@@ -63,7 +63,7 @@ class SQLPreparedStatement {
 	 * @throws SQLStatementException
 	 */
 	public function execute() {
-		if(!$this->strPendingStatement) throw new SQLException("Cannot execute a statement that hasn't been prepared!");
+		if(!$this->strPendingStatement) throw new SQLStatementException("Cannot execute a statement that hasn't been prepared!");
 		try {
 			$this->PDOStatement->execute();
 		} catch(PDOException $e) {
