@@ -59,13 +59,14 @@ class SQLPreparedStatement {
 	/**
 	 * Executes a prepared statement.
 	 * 
+	 * @param string:string An array of values with as many elements as there are bound parameters in the SQL statement being executed.
 	 * @return SQLStatementResults
 	 * @throws SQLException, SQLStatementException
 	 */
-	public function execute() {
+	public function execute($boundParameters = array()) {
 		if(!$this->strPendingStatement) throw new SQLException("Cannot execute a statement that hasn't been prepared!");
 		try {
-			$this->PDOStatement->execute();
+			$this->PDOStatement->execute($boundParameters);
 		} catch(PDOException $e) {
 			throw new SQLStatementException($e->getMessage(), $e->getCode(), $this->strPendingStatement);
 		}
