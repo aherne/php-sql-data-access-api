@@ -66,7 +66,11 @@ class SQLPreparedStatement {
 	public function execute($boundParameters = array()) {
 		if(!$this->strPendingStatement) throw new SQLException("Cannot execute a statement that hasn't been prepared!");
 		try {
-			$this->PDOStatement->execute($boundParameters);
+			if(!empty($boundParameters)) {
+				$this->PDOStatement->execute($boundParameters);
+			} else {
+				$this->PDOStatement->execute();
+			}			
 		} catch(PDOException $e) {
 			throw new SQLStatementException($e->getMessage(), $e->getCode(), $this->strPendingStatement);
 		}
