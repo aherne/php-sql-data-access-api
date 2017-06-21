@@ -62,6 +62,14 @@ class SQLConnection {
 	public function disconnect() {
 		$this->PDO = null;
 	}
+	
+	/**
+	 * Reconnects to database server.
+	 */
+	public function reconnect() {
+		$this->disconnect();
+		$this->connect($this->objDataSource);
+	}
 
 	/**
 	 * Operates with transactions on current connection.
