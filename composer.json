@@ -1,0 +1,15 @@
+{
+    "name": "lucinda/sql-data-access",
+    "type": "library",
+    "description": "Abstracts all communication with SQL servers on top of PDO",
+    "keywords": ["sql","data access"],
+    "homepage": "https://github.com/aherne/php-sql-data-access-api",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lucian Popescu",
+            "email": "lucian.gabriel.popescu@gmail.com",
+            "role": "Developer"
+        }
+    ]
+}
