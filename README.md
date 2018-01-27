@@ -1,30 +1,14 @@
 # Data Access API for PHP
 
-This API implements operations that can be performed on an SQL server from a PHP script. It runs a layer of abstraction above PDO, which is (like most OO PHP libraries), disorganized and poorly designed.
+This API, loosely inspired from Java JDBC, encapsulates communication between an SQL server and a PHP script. It runs a layer of abstraction above PDO, which is (like most native OO PHP libraries), disorganized and poorly designed. In adition of enveloping PDO operations into a far more logical layer and solving adjacent flaws, it adds: 
 
-On a closer inspection of PDO class, we notice that methods inside are in fact clearly divided into four types:
+- connection via data source objects (encapsulating connection credentials)
+- flexible error management system (different exceptions thrown on connection and query execution errors, filled with all information necessary to tackle the issue later on)
+- singleton factories for database connections (in order to give developers an option to use a single connection for same server during a single session)
+- a far more logical organization of PDO operations (split into connection, statement, prepared statement and transaction related)
+- query results parsers (in order to transform results of SELECT statements into PHP scalars/arrays and also to get number of rows affected / last insert id of INSERT/UPDATE statements)
 
-- connection related
-- transaction related
-- statement execution related
-- error related
-
-While having a look at PDOStatement class, the same pattern is observed. Methods are now clearly divided into four groups:
-
-- attribute related
-- error related
-- statement execution related
-- statement results related
-
-This current library fixes these problems with a simple light weight architecture built on top of PDO chaos providing: 
-
-- connection via data source objects
-- flexible error management system
-- singleton factories for database connections
-- a far more logical organization of operations implemented by PDO
-- resultset parsers
-
-This API, even though totally decoupled, is <i>conceptual</i> part of SQL Suites, an integrated solution designed to cover all aspects of communication with SQL servers. 
+Everything is built on "less is more" principle: nothing but server related logic is present here! This makes the cost of using it negligible, unlike its much heavier weight "competitors" (generally embedded in some framework).
 
 More information here:<br/>
 http://www.lucinda-framework.com/sql-data-access-api
