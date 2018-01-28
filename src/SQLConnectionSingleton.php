@@ -5,7 +5,7 @@
 final class SQLConnectionSingleton
 {
     /**
-     * @var DataSource
+     * @var SQLDataSource
      */
     private static $dataSource = null;
     
