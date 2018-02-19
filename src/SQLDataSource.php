@@ -10,6 +10,7 @@ class SQLDataSource {
 	private $strUserName;
 	private $strPassword;
 	private $strSchema;
+    private $strCharset;
 
 	/**
 	 * Sets database server driver name.
@@ -143,4 +144,22 @@ class SQLDataSource {
 	public function getSchema() {
 		return $this->strSchema;
 	}
+
+    /**
+     * Sets database server default charset
+     *
+     * @param string $strCharset
+     */
+	public function setCharset($strCharset) {
+	    $this->strCharset = $strCharset;
+    }
+
+    /**
+     * Gets database server default charset.
+     *
+     * @return string
+     */
+    public function getCharset() {
+	    return $this->strCharset;
+    }
 }

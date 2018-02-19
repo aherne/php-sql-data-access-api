@@ -30,6 +30,7 @@ class SQLConnection {
 			$settings = ":host=".$objDataSource->getHost();
 			if($objDataSource->getPort()) $settings .= ";port=".$objDataSource->getPort();
 			if($objDataSource->getSchema()) $settings .= ";dbname=".$objDataSource->getSchema();
+            if($objDataSource->getCharset()) $settings .= ";charset=".$objDataSource->getCharset();
 
 			// performs connection to PDO
 			$this->PDO = new PDO($objDataSource->getDriverName().$settings, $objDataSource->getUserName(), $objDataSource->getPassword(), $objDataSource->getDriverOptions());
