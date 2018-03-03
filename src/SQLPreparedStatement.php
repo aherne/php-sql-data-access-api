@@ -20,9 +20,9 @@ class SQLPreparedStatement {
 	/**
 	 * Statement to be prepared.
 	 * 
-	 * @var string $strPendingStatement
+	 * @var string $pendingStatement
 	 */
-	protected $strPendingStatement;
+	protected $pendingStatement;
 	
 	/**
 	 * Creates a SQL prepared statement object automatically.
@@ -36,24 +36,24 @@ class SQLPreparedStatement {
 	/**
 	 * Prepares a statement for execution.
 	 * 
-	 * @param string $strQuery
+	 * @param string $query
 	 */
-	public function prepare($strQuery) {
-		$this->strPendingStatement=$strQuery;
-		$this->PDOStatement = $this->PDO->prepare($strQuery);
+	public function prepare($query) {
+		$this->pendingStatement=$query;
+		$this->PDOStatement = $this->PDO->prepare($query);
 	}
 
 	/**
 	 * Binds a value to a prepared statement.
 	 *
-	 * @param string $strParameter
-	 * @param mixed $mixValue
-	 * @param integer $intDataType
+	 * @param string $parameter
+	 * @param mixed $value
+	 * @param integer $dataType
 	 * @throws SQLException
 	 */
-	public function bind($strParameter, $mixValue, $intDataType=PDO::PARAM_STR) {
-		if(!$this->strPendingStatement) throw new SQLException("Cannot bind anything on a statement that hasn't been prepared!");
-		$this->PDOStatement->bindValue($strParameter, $mixValue, $intDataType);
+	public function bind($parameter, $value, $dataType=PDO::PARAM_STR) {
+		if(!$this->pendingStatement) throw new SQLException("Cannot bind anything on a statement that hasn't been prepared!");
+		$this->PDOStatement->bindValue($parameter, $value, $dataType);
 	}
 	
 	/**
@@ -64,7 +64,7 @@ class SQLPreparedStatement {
 	 * @throws SQLException, SQLStatementException
 	 */
 	public function execute($boundParameters = array()) {
-		if(!$this->strPendingStatement) throw new SQLException("Cannot execute a statement that hasn't been prepared!");
+		if(!$this->pendingStatement) throw new SQLException("Cannot execute a statement that hasn't been prepared!");
 		try {
 			if(!empty($boundParameters)) {
 				$this->PDOStatement->execute($boundParameters);
@@ -72,7 +72,7 @@ class SQLPreparedStatement {
 				$this->PDOStatement->execute();
 			}			
 		} catch(PDOException $e) {
-			throw new SQLStatementException($e->getMessage(), $e->getCode(), $this->strPendingStatement);
+			throw new SQLStatementException($e->getMessage(), $e->getCode(), $this->pendingStatement);
 		}
 		return new SQLStatementResults($this->PDO, $this->PDOStatement);
 	}

@@ -24,27 +24,27 @@ final class SQLConnectionFactory {
 	/**
 	 * Registers a data source object encapsulatings connection info based on unique server identifier.
 	 * 
-	 * @param string $strServerName Unique identifier of server you will be connecting to.
-	 * @param SQLDataSource $objDataSource
+	 * @param string $serverName Unique identifier of server you will be connecting to.
+	 * @param SQLDataSource $dataSource
 	 */
-	public static function setDataSource($strServerName, SQLDataSource $objDataSource){
-		self::$dataSources[$strServerName] = $objDataSource;
+	public static function setDataSource($serverName, SQLDataSource $dataSource){
+		self::$dataSources[$serverName] = $dataSource;
 	}
 	
 	/**
 	 * Opens connection to database server (if not already open) according to SQLDataSource and 
 	 * returns an object of that connection to delegate operations to.
 	 * 
-	 * @param string $strServerName Unique identifier of server you will be connecting to.
+	 * @param string $serverName Unique identifier of server you will be connecting to.
 	 * @throws SQLConnectionException
 	 * @return SQLConnection
 	 */
-	public static function getInstance($strServerName){
-        if(isset(self::$instances[$strServerName])) {
-            return self::$instances[$strServerName];
+	public static function getInstance($serverName){
+        if(isset(self::$instances[$serverName])) {
+            return self::$instances[$serverName];
         }
-        self::$instances[$strServerName] = new SQLConnectionFactory($strServerName);
-		return self::$instances[$strServerName];
+        self::$instances[$serverName] = new SQLConnectionFactory($serverName);
+		return self::$instances[$serverName];
 	}
 
 
@@ -53,10 +53,10 @@ final class SQLConnectionFactory {
 	 *
 	 * @throws SQLException
 	 */
-	private function __construct($strServerName) {
-		if(!isset(self::$dataSources[$strServerName])) throw new SQLException("Datasource not set for: ".$strServerName);
+	private function __construct($serverName) {
+		if(!isset(self::$dataSources[$serverName])) throw new SQLException("Datasource not set for: ".$serverName);
 		$this->database_connection = new SQLConnection();
-		$this->database_connection->connect(self::$dataSources[$strServerName]);
+		$this->database_connection->connect(self::$dataSources[$serverName]);
 	}
 	
 	/**

@@ -1,14 +1,14 @@
 <?php
 class SQLConnectionException extends Exception {
-	protected $strHostName="";
+	protected $hostName="";
 	
-	public function __construct($strMessage, $intErrorCode, $strHostName) {
-		$this->message = $strMessage;
-		$this->code = $intErrorCode;
-		$this->host = $strHostName;
+	public function __construct($message, $errorCode, $hostName) {
+		$this->message = $message;
+		$this->code = $errorCode;
+		$this->host = $hostName;
 	}
 	
 	public function getHostName() {
-		return $this->strHostName;
+		return $this->hostName;
 	}
 }

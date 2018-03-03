@@ -74,18 +74,18 @@ class SQLStatementResults {
 	}
 	
 	/**
-	 * Fetches all rows from Resultset into a mapping that has row value of $strColumnKeyName as key and row value of $strColumnValueName as value. 
+	 * Fetches all rows from Resultset into a mapping that has row value of $columnKeyName as key and row value of $columnValueName as value. 
 	 * 
-	 * @param string $strColumnKeyName
-	 * @param string $strColumnValueName
+	 * @param string $columnKeyName
+	 * @param string $columnValueName
 	 * @return array
 	 */
-	public function toMap($strColumnKeyName, $strColumnValueName) {
-		$tblOutput=array();
-		while($tblRow = $this->PDOStatement->fetch(PDO::FETCH_ASSOC)) {
-			$tblOutput[$tblRow[$strColumnKeyName]]=$tblRow[$strColumnValueName];
+	public function toMap($columnKeyName, $columnValueName) {
+		$output=array();
+		while($row = $this->PDOStatement->fetch(PDO::FETCH_ASSOC)) {
+			$output[$row[$columnKeyName]]=$row[$columnValueName];
 		}
-		return $tblOutput;
+		return $output;
 	}
 	
 	/**

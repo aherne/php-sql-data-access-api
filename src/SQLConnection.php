@@ -15,43 +15,43 @@ class SQLConnection {
 	 *
 	 * @var SQLDataSource
 	 */
-	protected $objDataSource;
+	protected $dataSource;
 
 	/**
 	 * Opens connection to database server.
 	 *
-	 * @param SQLDataSource $objDataSource
+	 * @param SQLDataSource $dataSource
 	 * @throws SQLConnectionException
 	 */
-	public function connect($objDataSource) {
+	public function connect(SQLDataSource $dataSource) {
 		// open connection
 		try {
 			// defines settings to send to pdo driver
-			$settings = ":host=".$objDataSource->getHost();
-			if($objDataSource->getPort()) $settings .= ";port=".$objDataSource->getPort();
-			if($objDataSource->getSchema()) $settings .= ";dbname=".$objDataSource->getSchema();
-            if($objDataSource->getCharset()) $settings .= ";charset=".$objDataSource->getCharset();
+			$settings = ":host=".$dataSource->getHost();
+			if($dataSource->getPort()) $settings .= ";port=".$dataSource->getPort();
+			if($dataSource->getSchema()) $settings .= ";dbname=".$dataSource->getSchema();
+            if($dataSource->getCharset()) $settings .= ";charset=".$dataSource->getCharset();
 
 			// performs connection to PDO
-			$this->PDO = new PDO($objDataSource->getDriverName().$settings, $objDataSource->getUserName(), $objDataSource->getPassword(), $objDataSource->getDriverOptions());
+			$this->PDO = new PDO($dataSource->getDriverName().$settings, $dataSource->getUserName(), $dataSource->getPassword(), $dataSource->getDriverOptions());
 			$this->PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		} catch(PDOException $e) {
-			throw new SQLConnectionException($e->getMessage(), $e->getCode(), $objDataSource->getHost());
+			throw new SQLConnectionException($e->getMessage(), $e->getCode(), $dataSource->getHost());
 		}
 
 		// saves datasource
-		$this->objDataSource = $objDataSource;
+		$this->dataSource = $dataSource;
 	}
 
 	/**
 	 * Restores connection to database server in case it got closed unexpectedly.
 	 */
 	public function keepAlive() {
-		$objStatement = new SQLStatement($this->PDO);
+		$statement = new SQLStatement($this->PDO);
 		try {
-			$objStatement->execute("SELECT 1");
+			$statement->execute("SELECT 1");
 		} catch(SQLStatementException $e) {
-			$this->connect($this->objDataSource);
+			$this->connect($this->dataSource);
 		}
 	}
 
@@ -69,7 +69,7 @@ class SQLConnection {
 	 */
 	public function reconnect() {
 		$this->disconnect();
-		$this->connect($this->objDataSource);
+		$this->connect($this->dataSource);
 	}
 
 	/**
@@ -113,10 +113,10 @@ class SQLConnection {
 	/**
 	 * Sets whether or not statements executed on server are commited by default.
 	 *
-	 * @param boolean $blnValue
+	 * @param boolean $value
 	 */
-	public function setAutoCommit($blnValue) {
-		$this->PDO->setAttribute(PDO::ATTR_AUTOCOMMIT, $blnValue);
+	public function setAutoCommit($value) {
+		$this->PDO->setAttribute(PDO::ATTR_AUTOCOMMIT, $value);
 	}
 
 	/**
@@ -131,10 +131,10 @@ class SQLConnection {
 	/**
 	 * Sets connection timeout on database server. (Not supported by all drivers)
 	 *
-	 * @param integer $intValue
+	 * @param integer $value
 	 */
-	public function setConnectionTimeout($intValue) {
-		$this->PDO->setAttribute(PDO::ATTR_TIMEOUT, $intValue);
+	public function setConnectionTimeout($value) {
+		$this->PDO->setAttribute(PDO::ATTR_TIMEOUT, $value);
 	}
 
 	/**
@@ -148,9 +148,9 @@ class SQLConnection {
 
 	/**
 	 * Sets whether or not current connection is persistent.
-	 * @param boolean $blnValue
+	 * @param boolean $value
 	 */
-	public function setPersistent($blnValue) {
-		$this->PDO->setAttribute(PDO::ATTR_PERSISTENT, $blnValue);
+	public function setPersistent($value) {
+		$this->PDO->setAttribute(PDO::ATTR_PERSISTENT, $value);
 	}
 }

@@ -22,26 +22,26 @@ class SQLStatement {
 	/**
 	 * Quotes a string for use in a query.
 	 * 
-	 * @param mixed $mixValue
+	 * @param mixed $value
 	 * @return string
 	 */
-	public function quote($mixValue) {
-		return $this->PDO->quote($mixValue);
+	public function quote($value) {
+		return $this->PDO->quote($value);
 	}
 	
 	/**
 	 * Executes a query.
 	 * 
-	 * @param string $strQuery
+	 * @param string $query
 	 * @throws SQLStatementException
 	 * @return SQLStatementResults
 	 */
-	public function execute($strQuery) {
+	public function execute($query) {
 		$stmt=null;
 		try {
-			$stmt = $this->PDO->query($strQuery);
+			$stmt = $this->PDO->query($query);
 		} catch(PDOException $e) {
-			throw new SQLStatementException($e->getMessage(), $e->getCode(), $strQuery);
+			throw new SQLStatementException($e->getMessage(), $e->getCode(), $query);
 		}
 		return new SQLStatementResults($this->PDO, $stmt);
 	}

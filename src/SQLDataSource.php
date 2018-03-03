@@ -3,23 +3,23 @@
  * Implements a data source.
 */
 class SQLDataSource {
-	private $strDriverName;
-	private $tblDriverOptions;
-	private $strHost;
-	private $intPort;
-	private $strUserName;
-	private $strPassword;
-	private $strSchema;
-    private $strCharset;
+	private $driverName;
+	private $driverOptions;
+	private $host;
+	private $port;
+	private $userName;
+	private $password;
+	private $schema;
+    private $charset;
 
 	/**
 	 * Sets database server driver name.
 	 *
-	 * @param string $strDriverName
+	 * @param string $driverName
 	 * @return void
 	 */
-	public function setDriverName($strDriverName) {
-		$this->strDriverName = $strDriverName;
+	public function setDriverName($driverName) {
+		$this->driverName = $driverName;
 	}
 
 	/**
@@ -28,17 +28,17 @@ class SQLDataSource {
 	 * @return string
 	 */
 	public function getDriverName() {
-		return $this->strDriverName;
+		return $this->driverName;
 	}
 
 	/**
 	 * Sets database server vendor options
 	 *
-	 * @param array $tblDriverOptions
+	 * @param array $driverOptions
 	 * @return void
 	 */
-	public function setDriverOptions($tblDriverOptions) {
-		$this->tblDriverOptions = $tblDriverOptions;
+	public function setDriverOptions($driverOptions) {
+		$this->driverOptions = $driverOptions;
 	}
 
 	/**
@@ -47,17 +47,17 @@ class SQLDataSource {
 	 * @return array
 	 */
 	public function getDriverOptions() {
-		return $this->tblDriverOptions;
+		return $this->driverOptions;
 	}
 
 	/**
 	 * Sets database server host name
 	 *
-	 * @param string $strHost
+	 * @param string $host
 	 * @return void
 	 */
-	public function setHost($strHost) {
-		$this->strHost = $strHost;
+	public function setHost($host) {
+		$this->host = $host;
 	}
 
 	/**
@@ -66,17 +66,17 @@ class SQLDataSource {
 	 * @return string
 	 */
 	public function getHost() {
-		return $this->strHost;
+		return $this->host;
 	}
 
 	/**
 	 * Sets database server port
 	 *
-	 * @param integer $intPort
+	 * @param integer $port
 	 * @return void
 	 */
-	public function setPort($intPort) {
-		$this->intPort = $intPort;
+	public function setPort($port) {
+		$this->port = $port;
 	}
 
 	/**
@@ -85,17 +85,17 @@ class SQLDataSource {
 	 * @return integer
 	 */
 	public function getPort() {
-		return $this->intPort;
+		return $this->port;
 	}
 
 	/**
 	 * Sets database server user name
 	 *
-	 * @param string $strUserName
+	 * @param string $userName
 	 * @return void
 	 */
-	public function setUserName($strUserName){
-		$this->strUserName = $strUserName;
+	public function setUserName($userName){
+		$this->userName = $userName;
 	}
 
 	/**
@@ -104,17 +104,17 @@ class SQLDataSource {
 	 * @return string
 	 */
 	public function getUserName() {
-		return $this->strUserName;
+		return $this->userName;
 	}
 
 	/**
 	 * Sets database server user password
 	 *
-	 * @param string $strPassword
+	 * @param string $password
 	 * @return void
 	 */
-	public function setPassword($strPassword) {
-		$this->strPassword = $strPassword;
+	public function setPassword($password) {
+		$this->password = $password;
 	}
 
 	/**
@@ -123,17 +123,17 @@ class SQLDataSource {
 	 * @return string
 	 */
 	public function getPassword() {
-		return $this->strPassword;
+		return $this->password;
 	}
 
 	/**
 	 * Sets database server default schema
 	 *
-	 * @param string $strSchema
+	 * @param string $schema
 	 * @return void
 	 */
-	public function setSchema($strSchema) {
-		$this->strSchema = $strSchema;
+	public function setSchema($schema) {
+		$this->schema = $schema;
 	}
 
 	/**
@@ -142,16 +142,16 @@ class SQLDataSource {
 	 * @return string
 	 */
 	public function getSchema() {
-		return $this->strSchema;
+		return $this->schema;
 	}
 
     /**
      * Sets database server default charset
      *
-     * @param string $strCharset
+     * @param string $charset
      */
-	public function setCharset($strCharset) {
-	    $this->strCharset = $strCharset;
+	public function setCharset($charset) {
+	    $this->charset = $charset;
     }
 
     /**
@@ -160,6 +160,6 @@ class SQLDataSource {
      * @return string
      */
     public function getCharset() {
-	    return $this->strCharset;
+	    return $this->charset;
     }
 }
