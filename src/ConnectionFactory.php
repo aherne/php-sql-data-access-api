@@ -1,8 +1,9 @@
 <?php
+namespace Lucinda\SQL;
 /**
  * Implements a singleton factory for multiple SQL servers connection.
  */
-final class SQLConnectionFactory {
+final class ConnectionFactory {
 	/**
 	 * Stores open connections.
 	 * 
@@ -17,7 +18,7 @@ final class SQLConnectionFactory {
 	private static $dataSources;
 	
     /**
-     * @var SQLConnection
+     * @var Connection
      */
     private $database_connection = null;
 	
@@ -25,25 +26,25 @@ final class SQLConnectionFactory {
 	 * Registers a data source object encapsulatings connection info based on unique server identifier.
 	 * 
 	 * @param string $serverName Unique identifier of server you will be connecting to.
-	 * @param SQLDataSource $dataSource
+	 * @param DataSource $dataSource
 	 */
-	public static function setDataSource($serverName, SQLDataSource $dataSource){
+	public static function setDataSource($serverName, DataSource $dataSource){
 		self::$dataSources[$serverName] = $dataSource;
 	}
 	
 	/**
-	 * Opens connection to database server (if not already open) according to SQLDataSource and 
+	 * Opens connection to database server (if not already open) according to DataSource and 
 	 * returns an object of that connection to delegate operations to.
 	 * 
 	 * @param string $serverName Unique identifier of server you will be connecting to.
-	 * @throws SQLConnectionException
-	 * @return SQLConnection
+	 * @throws ConnectionException
+	 * @return Connection
 	 */
 	public static function getInstance($serverName){
         if(isset(self::$instances[$serverName])) {
             return self::$instances[$serverName];
         }
-        self::$instances[$serverName] = new SQLConnectionFactory($serverName);
+        self::$instances[$serverName] = new ConnectionFactory($serverName);
 		return self::$instances[$serverName];
 	}
 
@@ -51,18 +52,18 @@ final class SQLConnectionFactory {
 	/**
 	 * Connects to database automatically.
 	 *
-	 * @throws SQLException
+	 * @throws Exception
 	 */
 	private function __construct($serverName) {
-		if(!isset(self::$dataSources[$serverName])) throw new SQLException("Datasource not set for: ".$serverName);
-		$this->database_connection = new SQLConnection();
+		if(!isset(self::$dataSources[$serverName])) throw new Exception("Datasource not set for: ".$serverName);
+		$this->database_connection = new Connection();
 		$this->database_connection->connect(self::$dataSources[$serverName]);
 	}
 	
 	/**
 	 * Internal utility to get connection.
 	 *
-	 * @return SQLConnection
+	 * @return Connection
 	 */
 	private function getConnection() {
 		return $this->database_connection;
@@ -76,7 +77,7 @@ final class SQLConnectionFactory {
         	if($this->database_connection) {
 				$this->database_connection->disconnect();
         	}
-		} catch(Exception $e) {}
+		} catch(\Exception $e) {}
 	}
 	
 }

@@ -1,19 +1,20 @@
 <?php
+namespace Lucinda\SQL;
 /**
  * Implements a database prepared statement on top of PDO.
  */
-class SQLPreparedStatement {
+class PreparedStatement {
 	/**
 	 * Variable containing an instance of PDO class.
 	 * 
-	 * @var PDO PDO
+	 * @var \PDO PDO
 	 */
 	protected $PDO;
 	
 	/**
 	 * Variable containing an instance of PDOStatement class.
 	 * 
-	 * @var PDOStatement PDO
+	 * @var \PDOStatement PDO
 	 */
 	protected $PDOStatement;
 	
@@ -27,9 +28,9 @@ class SQLPreparedStatement {
 	/**
 	 * Creates a SQL prepared statement object automatically.
 	 * 
-	 * @param PDO $PDO
+	 * @param \PDO $PDO
 	 */
-	public function __construct($PDO) {
+	public function __construct(\PDO $PDO) {
 		$this->PDO = $PDO;
 	}
 	
@@ -49,10 +50,10 @@ class SQLPreparedStatement {
 	 * @param string $parameter
 	 * @param mixed $value
 	 * @param integer $dataType
-	 * @throws SQLException
+	 * @throws Exception
 	 */
-	public function bind($parameter, $value, $dataType=PDO::PARAM_STR) {
-		if(!$this->pendingStatement) throw new SQLException("Cannot bind anything on a statement that hasn't been prepared!");
+	public function bind($parameter, $value, $dataType=\PDO::PARAM_STR) {
+		if(!$this->pendingStatement) throw new Exception("Cannot bind anything on a statement that hasn't been prepared!");
 		$this->PDOStatement->bindValue($parameter, $value, $dataType);
 	}
 	
@@ -60,20 +61,20 @@ class SQLPreparedStatement {
 	 * Executes a prepared statement.
 	 * 
 	 * @param string:string An array of values with as many elements as there are bound parameters in the SQL statement being executed.
-	 * @return SQLStatementResults
-	 * @throws SQLException, SQLStatementException
+	 * @return StatementResults
+	 * @throws Exception, StatementException
 	 */
 	public function execute($boundParameters = array()) {
-		if(!$this->pendingStatement) throw new SQLException("Cannot execute a statement that hasn't been prepared!");
+		if(!$this->pendingStatement) throw new Exception("Cannot execute a statement that hasn't been prepared!");
 		try {
 			if(!empty($boundParameters)) {
 				$this->PDOStatement->execute($boundParameters);
 			} else {
 				$this->PDOStatement->execute();
 			}			
-		} catch(PDOException $e) {
-			throw new SQLStatementException($e->getMessage(), $e->getCode(), $this->pendingStatement);
+		} catch(\PDOException $e) {
+			throw new StatementException($e->getMessage(), $e->getCode(), $this->pendingStatement);
 		}
-		return new SQLStatementResults($this->PDO, $this->PDOStatement);
+		return new StatementResults($this->PDO, $this->PDOStatement);
 	}
 }

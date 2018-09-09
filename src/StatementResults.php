@@ -1,29 +1,30 @@
 <?php
+namespace Lucinda\SQL;
 /**
  * Implements statement results parsiong on top of PDO.
  */
-class SQLStatementResults {
+class StatementResults {
 	/**
 	 * Variable containing an instance of PDO class.
 	 * 
-	 * @var PDO PDO
+	 * @var \PDO PDO
 	 */
 	protected $PDO;
 	
 	/**
 	 * Variable containing an instance of PDOStatement class.
 	 * 
-	 * @var PDOStatement PDO
+	 * @var \PDOStatement PDO
 	 */
 	protected $PDOStatement;
 		
 	/**
 	 * Creates an object of statement results.
 	 * 
-	 * @param PDO $PDO
-	 * @param PDOStatement $PDOStatement
+	 * @param \PDO $PDO
+	 * @param \PDOStatement $PDOStatement
 	 */
-	public function __construct($PDO, $PDOStatement) {
+	public function __construct(\PDO $PDO, \PDOStatement $PDOStatement) {
 		$this->PDO = $PDO;
 		$this->PDOStatement = $PDOStatement;
 	}
@@ -61,7 +62,7 @@ class SQLStatementResults {
 	 * @return array
 	 */
 	public function toRow() {
-		return $this->PDOStatement->fetch(PDO::FETCH_ASSOC);
+		return $this->PDOStatement->fetch(\PDO::FETCH_ASSOC);
 	}
 	
 	/**
@@ -70,7 +71,7 @@ class SQLStatementResults {
 	 * @return array
 	 */
 	public function toColumn() {
-		return $this->PDOStatement->fetchAll(PDO::FETCH_COLUMN,0);
+		return $this->PDOStatement->fetchAll(\PDO::FETCH_COLUMN,0);
 	}
 	
 	/**
@@ -82,7 +83,7 @@ class SQLStatementResults {
 	 */
 	public function toMap($columnKeyName, $columnValueName) {
 		$output=array();
-		while($row = $this->PDOStatement->fetch(PDO::FETCH_ASSOC)) {
+		while($row = $this->PDOStatement->fetch(\PDO::FETCH_ASSOC)) {
 			$output[$row[$columnKeyName]]=$row[$columnValueName];
 		}
 		return $output;
@@ -94,6 +95,6 @@ class SQLStatementResults {
 	 * @return array
 	 */
 	public function toList() {
-		return $this->PDOStatement->fetchAll(PDO::FETCH_ASSOC);
+		return $this->PDOStatement->fetchAll(\PDO::FETCH_ASSOC);
 	}
 }

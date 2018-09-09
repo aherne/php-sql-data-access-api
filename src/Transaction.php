@@ -1,18 +1,23 @@
 <?php
-class SQLTransaction {
+namespace Lucinda\SQL;
+
+/**
+ * Encapsulates transaction operations on top of a PDO object
+ */
+class Transaction {
 	/**
 	 * Variable containing a PDO instance this class relies on.
 	 * 
-	 * @var PDO $PDO
+	 * @var \PDO $PDO
 	 */
 	protected $PDO;
 	
 	/**
 	 * Sets up a database transaction.
 	 * 
-	 * @param PDO $PDO
+	 * @param \PDO $PDO
 	 */
-	public function __construct($PDO) {
+	public function __construct(\PDO $PDO) {
 		$this->PDO=$PDO;
 	}
 	

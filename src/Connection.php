@@ -1,29 +1,31 @@
 <?php
+namespace Lucinda\SQL;
+
 /**
  * Implements a database connection on top of PDO.
 */
-class SQLConnection {
+class Connection {
 	/**
 	 * Variable containing an instance of PDO class.
 	 *
-	 * @var PDO
+	 * @var \PDO
 	 */
 	protected $PDO;
 
 	/**
-	 * Variable containing an instance of SQLDataSource class saved to be used in keep alive.
+	 * Variable containing an instance of DataSource class saved to be used in keep alive.
 	 *
-	 * @var SQLDataSource
+	 * @var DataSource
 	 */
 	protected $dataSource;
 
 	/**
 	 * Opens connection to database server.
 	 *
-	 * @param SQLDataSource $dataSource
-	 * @throws SQLConnectionException
+	 * @param DataSource $dataSource
+	 * @throws ConnectionException
 	 */
-	public function connect(SQLDataSource $dataSource) {
+	public function connect(DataSource $dataSource) {
 		// open connection
 		try {
 			// defines settings to send to pdo driver
@@ -33,10 +35,10 @@ class SQLConnection {
             if($dataSource->getCharset()) $settings .= ";charset=".$dataSource->getCharset();
 
 			// performs connection to PDO
-			$this->PDO = new PDO($dataSource->getDriverName().$settings, $dataSource->getUserName(), $dataSource->getPassword(), $dataSource->getDriverOptions());
-			$this->PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		} catch(PDOException $e) {
-			throw new SQLConnectionException($e->getMessage(), $e->getCode(), $dataSource->getHost());
+			$this->PDO = new \PDO($dataSource->getDriverName().$settings, $dataSource->getUserName(), $dataSource->getPassword(), $dataSource->getDriverOptions());
+			$this->PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+		} catch(\PDOException $e) {
+			throw new ConnectionException($e->getMessage(), $e->getCode(), $dataSource->getHost());
 		}
 
 		// saves datasource
@@ -47,10 +49,10 @@ class SQLConnection {
 	 * Restores connection to database server in case it got closed unexpectedly.
 	 */
 	public function keepAlive() {
-		$statement = new SQLStatement($this->PDO);
+		$statement = new Statement($this->PDO);
 		try {
 			$statement->execute("SELECT 1");
-		} catch(SQLStatementException $e) {
+		} catch(StatementException $e) {
 			$this->connect($this->dataSource);
 		}
 	}
@@ -76,29 +78,29 @@ class SQLConnection {
 	 * Operates with transactions on current connection.
 	 * NOTE: this does not automatically start a transaction. To do that, call begin method.
 	 *
-	 * @return SQLTransaction
+	 * @return Transaction
 	 */
 	public function transaction() {
-		return new SQLTransaction($this->PDO);
+		return new Transaction($this->PDO);
 	}
 
 	/**
 	 * Creates a statement on current connection.
 	 *
-	 * @return SQLStatement
+	 * @return Statement
 	 */
 	public function createStatement() {
-		return new SQLStatement($this->PDO);
+		return new Statement($this->PDO);
 	}
 
 
 	/**
 	 * Creates a prepared statement on current connection.
 	 *
-	 * @return SQLPreparedStatement
+	 * @return PreparedStatement
 	 */
 	public function createPreparedStatement() {
-		return new SQLPreparedStatement($this->PDO);
+		return new PreparedStatement($this->PDO);
 	}
 
 	/**
@@ -107,7 +109,7 @@ class SQLConnection {
 	 * @return boolean
 	 */
 	public function getAutoCommit() {
-		return $this->PDO->getAttribute(PDO::ATTR_AUTOCOMMIT);
+		return $this->PDO->getAttribute(\PDO::ATTR_AUTOCOMMIT);
 	}
 
 	/**
@@ -116,7 +118,7 @@ class SQLConnection {
 	 * @param boolean $value
 	 */
 	public function setAutoCommit($value) {
-		$this->PDO->setAttribute(PDO::ATTR_AUTOCOMMIT, $value);
+		$this->PDO->setAttribute(\PDO::ATTR_AUTOCOMMIT, $value);
 	}
 
 	/**
@@ -125,7 +127,7 @@ class SQLConnection {
 	 * @return integer
 	 */
 	public function getConnectionTimeout() {
-		return $this->PDO->getAttribute(PDO::ATTR_TIMEOUT);
+		return $this->PDO->getAttribute(\PDO::ATTR_TIMEOUT);
 	}
 
 	/**
@@ -134,7 +136,7 @@ class SQLConnection {
 	 * @param integer $value
 	 */
 	public function setConnectionTimeout($value) {
-		$this->PDO->setAttribute(PDO::ATTR_TIMEOUT, $value);
+		$this->PDO->setAttribute(\PDO::ATTR_TIMEOUT, $value);
 	}
 
 	/**
@@ -143,7 +145,7 @@ class SQLConnection {
 	 * @return boolean
 	 */
 	public function getPersistent() {
-		return $this->PDO->getAttribute(PDO::ATTR_PERSISTENT);
+		return $this->PDO->getAttribute(\PDO::ATTR_PERSISTENT);
 	}
 
 	/**
@@ -151,6 +153,6 @@ class SQLConnection {
 	 * @param boolean $value
 	 */
 	public function setPersistent($value) {
-		$this->PDO->setAttribute(PDO::ATTR_PERSISTENT, $value);
+		$this->PDO->setAttribute(\PDO::ATTR_PERSISTENT, $value);
 	}
 }

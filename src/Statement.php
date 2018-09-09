@@ -1,21 +1,22 @@
 <?php
+namespace Lucinda\SQL;
 /**
  * Implements a database statement on top of PDO.
  */
-class SQLStatement {
+class Statement {
 	/**
 	 * Variable containing an instance of PDO class.
 	 * 
-	 * @var PDO pdo
+	 * @var \PDO pdo
 	 */
 	protected $PDO;
 	
 	/**
 	 * Creates a SQL statement object.
 	 * 
-	 * @param PDO $PDO
+	 * @param \PDO $PDO
 	 */
-	public function __construct($PDO) {
+	public function __construct(\PDO $PDO) {
 		$this->PDO = $PDO;
 	}
 	
@@ -33,16 +34,16 @@ class SQLStatement {
 	 * Executes a query.
 	 * 
 	 * @param string $query
-	 * @throws SQLStatementException
-	 * @return SQLStatementResults
+	 * @throws StatementException
+	 * @return StatementResults
 	 */
 	public function execute($query) {
 		$stmt=null;
 		try {
 			$stmt = $this->PDO->query($query);
-		} catch(PDOException $e) {
-			throw new SQLStatementException($e->getMessage(), $e->getCode(), $query);
+		} catch(\PDOException $e) {
+			throw new StatementException($e->getMessage(), $e->getCode(), $query);
 		}
-		return new SQLStatementResults($this->PDO, $stmt);
+		return new StatementResults($this->PDO, $stmt);
 	}
 }

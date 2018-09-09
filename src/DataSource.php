@@ -1,8 +1,9 @@
 <?php
+namespace Lucinda\SQL;
 /**
- * Implements a data source.
+ * Encapsulates connection information to an SQL server
 */
-class SQLDataSource {
+class DataSource {
 	private $driverName;
 	private $driverOptions;
 	private $host;
