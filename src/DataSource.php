@@ -17,7 +17,6 @@ class DataSource {
 	 * Sets database server driver name.
 	 *
 	 * @param string $driverName
-	 * @return void
 	 */
 	public function setDriverName($driverName) {
 		$this->driverName = $driverName;
@@ -33,17 +32,16 @@ class DataSource {
 	}
 
 	/**
-	 * Sets database server vendor options
+	 * Sets database server vendor PDO connection options
 	 *
 	 * @param array $driverOptions
-	 * @return void
 	 */
 	public function setDriverOptions($driverOptions) {
 		$this->driverOptions = $driverOptions;
 	}
 
 	/**
-	 * Gets driver options
+	 * Gets database server vendor PDO connection options
 	 *
 	 * @return array
 	 */
@@ -55,7 +53,6 @@ class DataSource {
 	 * Sets database server host name
 	 *
 	 * @param string $host
-	 * @return void
 	 */
 	public function setHost($host) {
 		$this->host = $host;
@@ -74,7 +71,6 @@ class DataSource {
 	 * Sets database server port
 	 *
 	 * @param integer $port
-	 * @return void
 	 */
 	public function setPort($port) {
 		$this->port = $port;
@@ -93,7 +89,6 @@ class DataSource {
 	 * Sets database server user name
 	 *
 	 * @param string $userName
-	 * @return void
 	 */
 	public function setUserName($userName){
 		$this->userName = $userName;
@@ -112,7 +107,6 @@ class DataSource {
 	 * Sets database server user password
 	 *
 	 * @param string $password
-	 * @return void
 	 */
 	public function setPassword($password) {
 		$this->password = $password;
@@ -131,7 +125,6 @@ class DataSource {
 	 * Sets database server default schema
 	 *
 	 * @param string $schema
-	 * @return void
 	 */
 	public function setSchema($schema) {
 		$this->schema = $schema;

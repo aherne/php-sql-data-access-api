@@ -59,8 +59,6 @@ class Connection {
 
 	/**
 	 * Closes connection to database server.
-	 *
-	 * @return void
 	 */
 	public function disconnect() {
 		$this->PDO = null;
