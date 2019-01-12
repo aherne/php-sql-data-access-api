@@ -50,7 +50,7 @@ class StatementResults {
 	/**
 	 * Fetches first value of first row from ResultSet.
 	 * 
-	 * @return mixed
+	 * @return string
 	 */
 	public function toValue() {
 		return $this->PDOStatement->fetchColumn();
@@ -59,7 +59,7 @@ class StatementResults {
 	/**
 	 * Fetches row from ResultSet.
 	 *
-	 * @return array
+	 * @return string[string]
 	 */
 	public function toRow() {
 		return $this->PDOStatement->fetch(\PDO::FETCH_ASSOC);
@@ -68,7 +68,7 @@ class StatementResults {
 	/**
 	 * Fetches first column of all rows from ResultSet.
 	 * 
-	 * @return array
+	 * @return string[]
 	 */
 	public function toColumn() {
 		return $this->PDOStatement->fetchAll(\PDO::FETCH_COLUMN,0);

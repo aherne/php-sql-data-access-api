@@ -50,7 +50,7 @@ class PreparedStatement {
 	 * @param string $parameter
 	 * @param mixed $value
 	 * @param integer $dataType
-	 * @throws Exception
+	 * @throws Exception If developer tries to bind a parameter to a query that wasn't prepared.
 	 */
 	public function bind($parameter, $value, $dataType=\PDO::PARAM_STR) {
 		if(!$this->pendingStatement) throw new Exception("Cannot bind anything on a statement that hasn't been prepared!");
@@ -60,9 +60,10 @@ class PreparedStatement {
 	/**
 	 * Executes a prepared statement.
 	 * 
-	 * @param string:string An array of values with as many elements as there are bound parameters in the SQL statement being executed.
+	 * @param string[string] $boundParameters An array of values with as many elements as there are bound parameters in the SQL statement being executed.
 	 * @return StatementResults
-	 * @throws Exception, StatementException
+	 * @throws Exception If developer tries to execute a query that wasn't prepared.
+	 * @throws StatementException If query execution fails.
 	 */
 	public function execute($boundParameters = array()) {
 		if(!$this->pendingStatement) throw new Exception("Cannot execute a statement that hasn't been prepared!");

@@ -34,7 +34,7 @@ class Statement {
 	 * Executes a query.
 	 * 
 	 * @param string $query
-	 * @throws StatementException
+	 * @throws StatementException If query execution fails
 	 * @return StatementResults
 	 */
 	public function execute($query) {

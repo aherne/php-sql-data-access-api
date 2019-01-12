@@ -3,7 +3,7 @@ namespace Lucinda\SQL;
 /**
  * Implements a singleton factory for multiple SQL servers connection.
  */
-final class ConnectionFactory {
+class ConnectionFactory {
 	/**
 	 * Stores open connections.
 	 * 
@@ -37,7 +37,7 @@ final class ConnectionFactory {
 	 * returns an object of that connection to delegate operations to.
 	 * 
 	 * @param string $serverName Unique identifier of server you will be connecting to.
-	 * @throws ConnectionException
+	 * @throws ConnectionException If connection to database server fails.
 	 * @return Connection
 	 */
 	public static function getInstance($serverName){
@@ -52,7 +52,7 @@ final class ConnectionFactory {
 	/**
 	 * Connects to database automatically.
 	 *
-	 * @throws Exception
+	 * @throws ConnectionException If connection to database server fails.
 	 */
 	private function __construct($serverName) {
 		if(!isset(self::$dataSources[$serverName])) throw new Exception("Datasource not set for: ".$serverName);

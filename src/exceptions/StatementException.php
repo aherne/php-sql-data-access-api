@@ -10,8 +10,8 @@ class StatementException extends \Exception {
 	/**
 	 * Constructor.
 	 * 
-	 * @param string $message Error message
-	 * @param mixed $errorCode Vendor-specific error code
+	 * @param string $errorMessage Error message
+	 * @param mixed $errorId Vendor-specific error code
 	 * @param string $query Value of SQL statement that failed
 	 */
 	public function __construct($errorMessage, $errorId, $query) {

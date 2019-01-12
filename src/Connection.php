@@ -23,7 +23,7 @@ class Connection {
 	 * Opens connection to database server.
 	 *
 	 * @param DataSource $dataSource
-	 * @throws ConnectionException
+	 * @throws ConnectionException If connection to SQL server fails
 	 */
 	public function connect(DataSource $dataSource) {
 		// open connection
