@@ -3,7 +3,7 @@
     "type": "library",
     "description": "Abstracts all communication with SQL servers on top of PDO",
     "keywords": ["sql","data access"],
-    "homepage": "http://www.lucinda-framework.com/sql-data-access-api",
+    "homepage": "http://www.lucinda-framework.com/sql-data-access",
     "license": "MIT",
     "authors": [
         {
