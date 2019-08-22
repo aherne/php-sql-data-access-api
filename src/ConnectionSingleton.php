@@ -1,5 +1,6 @@
 <?php
 namespace Lucinda\SQL;
+
 /**
  * Implements a database connection singleton on top of Connection object. Useful when your application works with only one database server.
  */
@@ -22,7 +23,7 @@ class ConnectionSingleton
     
     /**
      * Registers a data source object encapsulatings connection info.
-     * 
+     *
      * @param DataSource $dataSource
      */
     public static function setDataSource(DataSource $dataSource)
@@ -31,14 +32,14 @@ class ConnectionSingleton
     }
         
     /**
-	 * Opens connection to database server (if not already open) according to DataSource and returns a Connection object. 
-     * 
+     * Opens connection to database server (if not already open) according to DataSource and returns a Connection object.
+     *
      * @return Connection
-	 * @throws ConnectionException If connection to database server fails.
+     * @throws ConnectionException If connection to database server fails.
      */
-    public static function getInstance() 
+    public static function getInstance()
     {
-        if(self::$instance) {
+        if (self::$instance) {
             return self::$instance->getConnection();
         }
         self::$instance = new ConnectionSingleton();
@@ -47,18 +48,21 @@ class ConnectionSingleton
     
     /**
      * Connects to database automatically.
-     * 
-	 * @throws ConnectionException If connection to database server fails.
+     *
+     * @throws ConnectionException If connection to database server fails.
      */
-    private function __construct() {
-		if(!self::$dataSource) throw new Exception("Datasource not set!");
+    private function __construct()
+    {
+        if (!self::$dataSource) {
+            throw new Exception("Datasource not set!");
+        }
         $this->database_connection = new Connection();
         $this->database_connection->connect(self::$dataSource);
     }
     
     /**
      * Internal utility to get connection.
-     * 
+     *
      * @return Connection
      */
     private function getConnection()
@@ -69,11 +73,13 @@ class ConnectionSingleton
     /**
      * Disconnects from database server automatically.
      */
-    public function __destruct() {
+    public function __destruct()
+    {
         try {
-        	if($this->database_connection) {
-        		$this->database_connection->disconnect();
-        	}
-        } catch(\Exception $e) {}
+            if ($this->database_connection) {
+                $this->database_connection->disconnect();
+            }
+        } catch (\Exception $e) {
+        }
     }
 }
