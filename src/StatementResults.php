@@ -69,7 +69,7 @@ class StatementResults
      */
     public function toRow()
     {
-        return (array) $this->PDOStatement->fetch(\PDO::FETCH_ASSOC);
+        return $this->PDOStatement->fetch(\PDO::FETCH_ASSOC);
     }
     
     /**
