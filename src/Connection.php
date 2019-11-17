@@ -1,6 +1,11 @@
 <?php
 namespace Lucinda\SQL;
 
+require("DataSource.php");
+require("PreparedStatement.php");
+require("Statement.php");
+require("Transaction.php");
+
 /**
  * Implements a database connection on top of PDO.
 */
