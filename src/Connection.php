@@ -1,11 +1,6 @@
 <?php
 namespace Lucinda\SQL;
 
-require("DataSource.php");
-require("PreparedStatement.php");
-require("Statement.php");
-require("Transaction.php");
-
 /**
  * Implements a database connection on top of PDO.
 */
@@ -31,7 +26,7 @@ class Connection
      * @param DataSource $dataSource
      * @throws ConnectionException If connection to SQL server fails
      */
-    public function connect(DataSource $dataSource)
+    public function connect(DataSource $dataSource): void
     {
         // open connection
         try {
@@ -61,7 +56,7 @@ class Connection
     /**
      * Restores connection to database server in case it got closed unexpectedly.
      */
-    public function keepAlive()
+    public function keepAlive(): void
     {
         $statement = new Statement($this->PDO);
         try {
@@ -74,7 +69,7 @@ class Connection
     /**
      * Closes connection to database server.
      */
-    public function disconnect()
+    public function disconnect(): void
     {
         $this->PDO = null;
     }
@@ -82,7 +77,7 @@ class Connection
     /**
      * Reconnects to database server.
      */
-    public function reconnect()
+    public function reconnect(): void
     {
         $this->disconnect();
         $this->connect($this->dataSource);
@@ -94,7 +89,7 @@ class Connection
      *
      * @return Transaction
      */
-    public function transaction()
+    public function transaction(): Transaction
     {
         return new Transaction($this->PDO);
     }
@@ -104,7 +99,7 @@ class Connection
      *
      * @return Statement
      */
-    public function createStatement()
+    public function createStatement(): Statement
     {
         return new Statement($this->PDO);
     }
@@ -115,7 +110,7 @@ class Connection
      *
      * @return PreparedStatement
      */
-    public function createPreparedStatement()
+    public function createPreparedStatement(): PreparedStatement
     {
         return new PreparedStatement($this->PDO);
     }
@@ -125,7 +120,7 @@ class Connection
      *
      * @return boolean
      */
-    public function getAutoCommit()
+    public function getAutoCommit(): bool
     {
         return $this->PDO->getAttribute(\PDO::ATTR_AUTOCOMMIT);
     }
@@ -135,7 +130,7 @@ class Connection
      *
      * @param boolean $value
      */
-    public function setAutoCommit($value)
+    public function setAutoCommit(bool $value): void
     {
         $this->PDO->setAttribute(\PDO::ATTR_AUTOCOMMIT, $value);
     }
@@ -145,7 +140,7 @@ class Connection
      *
      * @return integer
      */
-    public function getConnectionTimeout()
+    public function getConnectionTimeout(): int
     {
         return $this->PDO->getAttribute(\PDO::ATTR_TIMEOUT);
     }
@@ -155,7 +150,7 @@ class Connection
      *
      * @param integer $value
      */
-    public function setConnectionTimeout($value)
+    public function setConnectionTimeout(int $value): void
     {
         $this->PDO->setAttribute(\PDO::ATTR_TIMEOUT, $value);
     }
@@ -165,7 +160,7 @@ class Connection
      *
      * @return boolean
      */
-    public function getPersistent()
+    public function getPersistent(): bool
     {
         return $this->PDO->getAttribute(\PDO::ATTR_PERSISTENT);
     }
@@ -174,7 +169,7 @@ class Connection
      * Sets whether or not current connection is persistent.
      * @param boolean $value
      */
-    public function setPersistent($value)
+    public function setPersistent(bool $value): void
     {
         $this->PDO->setAttribute(\PDO::ATTR_PERSISTENT, $value);
     }

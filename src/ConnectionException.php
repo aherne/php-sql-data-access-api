@@ -12,7 +12,7 @@ class ConnectionException extends \Exception
      * Constructor.
      *
      * @param string $message Error message
-     * @param mixed $errorCode Vendor-specific error code
+     * @param string $errorCode Vendor-specific error code
      * @param string $hostName Server host name in which error occurred (useful when app connects to multiple servers)
      */
     public function __construct($message, $errorCode, $hostName)
@@ -27,7 +27,7 @@ class ConnectionException extends \Exception
      *
      * @return string
      */
-    public function getHostName()
+    public function getHostName(): string
     {
         return $this->hostName;
     }

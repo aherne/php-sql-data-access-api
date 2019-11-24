@@ -18,7 +18,7 @@ class Statement
      *
      * @param \PDO $PDO
      */
-    public function __construct(\PDO $PDO)
+    public function __construct(\PDO $PDO): void
     {
         $this->PDO = $PDO;
     }
@@ -26,10 +26,10 @@ class Statement
     /**
      * Quotes a string for use in a query.
      *
-     * @param mixed $value
+     * @param string $value
      * @return string
      */
-    public function quote($value)
+    public function quote($value): string
     {
         return $this->PDO->quote($value);
     }
@@ -41,7 +41,7 @@ class Statement
      * @throws StatementException If query execution fails
      * @return StatementResults
      */
-    public function execute($query)
+    public function execute(string $query): StatementResults
     {
         $stmt=null;
         try {

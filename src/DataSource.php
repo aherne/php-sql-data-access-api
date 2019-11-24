@@ -20,7 +20,7 @@ class DataSource
      *
      * @param string $driverName
      */
-    public function setDriverName($driverName)
+    public function setDriverName(string $driverName): void
     {
         $this->driverName = $driverName;
     }
@@ -30,7 +30,7 @@ class DataSource
      *
      * @return string
      */
-    public function getDriverName()
+    public function getDriverName(): string
     {
         return $this->driverName;
     }
@@ -40,7 +40,7 @@ class DataSource
      *
      * @param array $driverOptions
      */
-    public function setDriverOptions($driverOptions)
+    public function setDriverOptions(array $driverOptions): void
     {
         $this->driverOptions = $driverOptions;
     }
@@ -50,7 +50,7 @@ class DataSource
      *
      * @return array
      */
-    public function getDriverOptions()
+    public function getDriverOptions(): array
     {
         return $this->driverOptions;
     }
@@ -60,7 +60,7 @@ class DataSource
      *
      * @param string $host
      */
-    public function setHost($host)
+    public function setHost(string $host): void
     {
         $this->host = $host;
     }
@@ -70,7 +70,7 @@ class DataSource
      *
      * @return string
      */
-    public function getHost()
+    public function getHost(): string
     {
         return $this->host;
     }
@@ -80,7 +80,7 @@ class DataSource
      *
      * @param integer $port
      */
-    public function setPort($port)
+    public function setPort(int $port): void
     {
         $this->port = $port;
     }
@@ -90,7 +90,7 @@ class DataSource
      *
      * @return integer
      */
-    public function getPort()
+    public function getPort(): int
     {
         return $this->port;
     }
@@ -100,7 +100,7 @@ class DataSource
      *
      * @param string $userName
      */
-    public function setUserName($userName)
+    public function setUserName(string $userName): void
     {
         $this->userName = $userName;
     }
@@ -110,7 +110,7 @@ class DataSource
      *
      * @return string
      */
-    public function getUserName()
+    public function getUserName(): string
     {
         return $this->userName;
     }
@@ -120,7 +120,7 @@ class DataSource
      *
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPassword(string $password): void
     {
         $this->password = $password;
     }
@@ -130,7 +130,7 @@ class DataSource
      *
      * @return string
      */
-    public function getPassword()
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -140,7 +140,7 @@ class DataSource
      *
      * @param string $schema
      */
-    public function setSchema($schema)
+    public function setSchema(string $schema): void
     {
         $this->schema = $schema;
     }
@@ -150,7 +150,7 @@ class DataSource
      *
      * @return string
      */
-    public function getSchema()
+    public function getSchema(): string
     {
         return $this->schema;
     }
@@ -160,7 +160,7 @@ class DataSource
      *
      * @param string $charset
      */
-    public function setCharset($charset)
+    public function setCharset(string $charset): void
     {
         $this->charset = $charset;
     }
@@ -170,7 +170,7 @@ class DataSource
      *
      * @return string
      */
-    public function getCharset()
+    public function getCharset(): string
     {
         return $this->charset;
     }

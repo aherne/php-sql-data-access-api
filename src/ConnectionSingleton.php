@@ -26,7 +26,7 @@ class ConnectionSingleton
      *
      * @param DataSource $dataSource
      */
-    public static function setDataSource(DataSource $dataSource)
+    public static function setDataSource(DataSource $dataSource): void
     {
         self::$dataSource = $dataSource;
     }
@@ -37,7 +37,7 @@ class ConnectionSingleton
      * @return Connection
      * @throws ConnectionException If connection to database server fails.
      */
-    public static function getInstance()
+    public static function getInstance(): Connection
     {
         if (self::$instance) {
             return self::$instance->getConnection();
@@ -51,7 +51,7 @@ class ConnectionSingleton
      *
      * @throws ConnectionException If connection to database server fails.
      */
-    private function __construct()
+    private function __construct(): void
     {
         if (!self::$dataSource) {
             throw new Exception("Datasource not set!");
@@ -65,7 +65,7 @@ class ConnectionSingleton
      *
      * @return Connection
      */
-    private function getConnection()
+    private function getConnection(): Connection
     {
         return $this->database_connection;
     }
@@ -73,7 +73,7 @@ class ConnectionSingleton
     /**
      * Disconnects from database server automatically.
      */
-    public function __destruct()
+    public function __destruct(): void
     {
         try {
             if ($this->database_connection) {

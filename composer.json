@@ -5,6 +5,14 @@
     "keywords": ["sql","data access"],
     "homepage": "http://www.lucinda-framework.com/sql-data-access",
     "license": "MIT",
+    "require": {
+        "php": "^7.1"
+    },
+    "autoload": {
+    	"psr-4": {
+        	"Lucinda\\SQL\\": "src/"
+    	}
+    },
     "authors": [
         {
             "name": "Lucian Popescu",

@@ -12,7 +12,7 @@ class StatementException extends \Exception
      * Constructor.
      *
      * @param string $errorMessage Error message
-     * @param mixed $errorId Vendor-specific error code
+     * @param string $errorId Vendor-specific error code
      * @param string $query Value of SQL statement that failed
      */
     public function __construct($errorMessage, $errorId, $query)
@@ -27,7 +27,7 @@ class StatementException extends \Exception
      *
      * @return string
      */
-    public function getQuery()
+    public function getQuery(): string
     {
         return $this->query;
     }
