@@ -26,7 +26,7 @@ class StatementResults
      * @param \PDO $PDO
      * @param \PDOStatement $PDOStatement
      */
-    public function __construct(\PDO $PDO, \PDOStatement $PDOStatement): void
+    public function __construct(\PDO $PDO, \PDOStatement $PDOStatement)
     {
         $this->PDO = $PDO;
         $this->PDOStatement = $PDOStatement;

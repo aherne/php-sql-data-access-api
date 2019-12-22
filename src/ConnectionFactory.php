@@ -81,7 +81,7 @@ class ConnectionFactory
     /**
      * Disconnects from database server automatically.
      */
-    public function __destruct(): void
+    public function __destruct()
     {
         try {
             if ($this->database_connection) {

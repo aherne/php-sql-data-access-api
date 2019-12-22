@@ -32,7 +32,7 @@ class PreparedStatement
      *
      * @param \PDO $PDO
      */
-    public function __construct(\PDO $PDO): void
+    public function __construct(\PDO $PDO)
     {
         $this->PDO = $PDO;
     }
