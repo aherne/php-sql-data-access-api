@@ -45,11 +45,10 @@ class ConnectionFactory
      */
     public static function getInstance($serverName)
     {
-        if (isset(self::$instances[$serverName])) {
-            return self::$instances[$serverName];
+        if (!isset(self::$instances[$serverName])) {
+            self::$instances[$serverName] = new ConnectionFactory($serverName);
         }
-        self::$instances[$serverName] = new ConnectionFactory($serverName);
-        return self::$instances[$serverName];
+        return self::$instances[$serverName]->getConnection();
     }
 
 
