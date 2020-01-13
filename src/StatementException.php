@@ -7,19 +7,15 @@ namespace Lucinda\SQL;
 class StatementException extends \Exception
 {
     protected $query;
-     
+    
     /**
-     * Constructor.
+     * Gets value of sql statement that failed
      *
-     * @param string $errorMessage Error message
-     * @param string $errorId Vendor-specific error code
-     * @param string $query Value of SQL statement that failed
+     * @param string $query
      */
-    public function __construct($errorMessage, $errorId, $query)
+    public function setQuery(string $query): void
     {
-        $this->message = $errorMessage;
-        $this->code = $errorId;
-        $this->query = $query;
+        return $this->query;
     }
     
     /**

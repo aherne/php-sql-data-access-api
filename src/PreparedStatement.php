@@ -84,7 +84,9 @@ class PreparedStatement
                 $this->PDOStatement->execute();
             }
         } catch (\PDOException $e) {
-            throw new StatementException($e->getMessage(), $e->getCode(), $this->pendingStatement);
+            $exception = new StatementException($e->getMessage(), $e->getCode());
+            $exception->setQuery($this->pendingStatement);
+            throw $exception;
         }
         return new StatementResults($this->PDO, $this->PDOStatement);
     }

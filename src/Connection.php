@@ -46,7 +46,9 @@ class Connection
             $this->PDO = new \PDO($dataSource->getDriverName().$settings, $dataSource->getUserName(), $dataSource->getPassword(), $dataSource->getDriverOptions());
             $this->PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         } catch (\PDOException $e) {
-            throw new ConnectionException($e->getMessage(), $e->getCode(), $dataSource->getHost());
+            $exception = new ConnectionException($e->getMessage(), $e->getCode());
+            $exception->setHostName($dataSource->getHost());
+            throw $exception;
         }
 
         // saves datasource
@@ -114,17 +116,7 @@ class Connection
     {
         return new PreparedStatement($this->PDO);
     }
-
-    /**
-     * Returns whether or not statements executed on server are commited by default.
-     *
-     * @return boolean
-     */
-    public function getAutoCommit(): bool
-    {
-        return $this->PDO->getAttribute(\PDO::ATTR_AUTOCOMMIT);
-    }
-
+    
     /**
      * Sets whether or not statements executed on server are commited by default.
      *
@@ -136,15 +128,15 @@ class Connection
     }
 
     /**
-     * Gets connection timeout from database server. (Not supported by all drivers)
+     * Returns whether or not statements executed on server are commited by default.
      *
-     * @return integer
+     * @return boolean
      */
-    public function getConnectionTimeout(): int
+    public function getAutoCommit(): bool
     {
-        return $this->PDO->getAttribute(\PDO::ATTR_TIMEOUT);
+        return $this->PDO->getAttribute(\PDO::ATTR_AUTOCOMMIT);
     }
-
+    
     /**
      * Sets connection timeout on database server. (Not supported by all drivers)
      *
@@ -156,15 +148,15 @@ class Connection
     }
 
     /**
-     * Returns whether or not current connection is persistent.
+     * Gets connection timeout from database server. (Not supported by all drivers)
      *
-     * @return boolean
+     * @return integer
      */
-    public function getPersistent(): bool
+    public function getConnectionTimeout(): int
     {
-        return $this->PDO->getAttribute(\PDO::ATTR_PERSISTENT);
+        return $this->PDO->getAttribute(\PDO::ATTR_TIMEOUT);
     }
-
+    
     /**
      * Sets whether or not current connection is persistent.
      * @param boolean $value
@@ -172,5 +164,15 @@ class Connection
     public function setPersistent(bool $value): void
     {
         $this->PDO->setAttribute(\PDO::ATTR_PERSISTENT, $value);
+    }
+
+    /**
+     * Returns whether or not current connection is persistent.
+     *
+     * @return boolean
+     */
+    public function getPersistent(): bool
+    {
+        return $this->PDO->getAttribute(\PDO::ATTR_PERSISTENT);
     }
 }

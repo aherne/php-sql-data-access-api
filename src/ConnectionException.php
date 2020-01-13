@@ -7,19 +7,15 @@ namespace Lucinda\SQL;
 class ConnectionException extends \Exception
 {
     protected $hostName="";
-    
+        
     /**
-     * Constructor.
+     * Sets sql server host name in which error has occurred.
      *
-     * @param string $message Error message
-     * @param string $errorCode Vendor-specific error code
-     * @param string $hostName Server host name in which error occurred (useful when app connects to multiple servers)
+     * @param string $hostName
      */
-    public function __construct($message, $errorCode, $hostName)
+    public function setHostName(string $hostName): void
     {
-        $this->message = $message;
-        $this->code = $errorCode;
-        $this->host = $hostName;
+        $this->hostName = $hostName;
     }
     
     /**
