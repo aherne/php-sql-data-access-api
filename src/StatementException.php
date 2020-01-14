@@ -15,7 +15,7 @@ class StatementException extends \Exception
      */
     public function setQuery(string $query): void
     {
-        return $this->query;
+        $this->query = $query;
     }
     
     /**

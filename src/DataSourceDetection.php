@@ -29,7 +29,7 @@ class DataSourceDetection
         $dataSource->setDriverName((string) $databaseInfo["driver"]);
         $dataSource->setDriverOptions(array()); // currently, setting driver options isn't possible
         $dataSource->setHost((string) $databaseInfo["host"]);
-        $dataSource->setPort((string) $databaseInfo["port"]);
+        $dataSource->setPort((int) $databaseInfo["port"]);
         $dataSource->setUserName((string) $databaseInfo["username"]);
         $dataSource->setPassword((string) $databaseInfo["password"]);
         $dataSource->setSchema((string) $databaseInfo["schema"]);

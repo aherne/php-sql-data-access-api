@@ -58,7 +58,7 @@ class ConnectionFactory
      * @param string $serverName Unique identifier of server you will be connecting to.
      * @throws ConnectionException If connection to database server fails.
      */
-    private function __construct(string $serverName): void
+    private function __construct(string $serverName)
     {
         if (!isset(self::$dataSources[$serverName])) {
             throw new Exception("Datasource not set for: ".$serverName);

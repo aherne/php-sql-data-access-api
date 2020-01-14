@@ -47,7 +47,7 @@ class Statement
         try {
             $stmt = $this->PDO->query($query);
         } catch (\PDOException $e) {
-            $exception = new StatementException($e->getMessage(), $e->getCode());
+            $exception = new StatementException($e->getMessage(), (int) $e->getCode());
             $exception->setQuery($query);
             throw $exception;
         }

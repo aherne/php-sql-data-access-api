@@ -56,36 +56,6 @@ class Connection
     }
 
     /**
-     * Restores connection to database server in case it got closed unexpectedly.
-     */
-    public function keepAlive(): void
-    {
-        $statement = new Statement($this->PDO);
-        try {
-            $statement->execute("SELECT 1");
-        } catch (StatementException $e) {
-            $this->connect($this->dataSource);
-        }
-    }
-
-    /**
-     * Closes connection to database server.
-     */
-    public function disconnect(): void
-    {
-        $this->PDO = null;
-    }
-    
-    /**
-     * Reconnects to database server.
-     */
-    public function reconnect(): void
-    {
-        $this->disconnect();
-        $this->connect($this->dataSource);
-    }
-
-    /**
      * Operates with transactions on current connection.
      * NOTE: this does not automatically start a transaction. To do that, call begin method.
      *
@@ -174,5 +144,35 @@ class Connection
     public function getPersistent(): bool
     {
         return $this->PDO->getAttribute(\PDO::ATTR_PERSISTENT);
+    }
+    
+    /**
+     * Restores connection to database server in case it got closed unexpectedly.
+     */
+    public function keepAlive(): void
+    {
+        $statement = new Statement($this->PDO);
+        try {
+            $statement->execute("SELECT 1");
+        } catch (StatementException $e) {
+            $this->connect($this->dataSource);
+        }
+    }
+    
+    /**
+     * Reconnects to database server.
+     */
+    public function reconnect(): void
+    {
+        $this->disconnect();
+        $this->connect($this->dataSource);
+    }
+    
+    /**
+     * Closes connection to database server.
+     */
+    public function disconnect(): void
+    {
+        $this->PDO = null;
     }
 }

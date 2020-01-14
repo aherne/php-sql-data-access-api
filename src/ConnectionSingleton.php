@@ -50,7 +50,7 @@ class ConnectionSingleton
      *
      * @throws ConnectionException If connection to database server fails.
      */
-    private function __construct(): void
+    private function __construct()
     {
         if (!self::$dataSource) {
             throw new Exception("Datasource not set!");
