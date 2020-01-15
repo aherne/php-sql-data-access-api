@@ -9,7 +9,7 @@ class ConnectionSingletonTest
 {
     public function setDataSource()
     {
-        $detector = new DataSourceDetection(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->servers->sql->local->server);
+        $detector = new DataSourceDetection(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server);
         ConnectionSingleton::setDataSource($detector->getDataSource());
         return new Result(true);
     }

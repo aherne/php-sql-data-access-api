@@ -15,7 +15,7 @@ class Wrapper
      */
     public function __construct(\SimpleXMLElement $xml, $developmentEnvironment)
     {
-        $xml = $xml->servers->sql->{$developmentEnvironment};
+        $xml = $xml->sql->{$developmentEnvironment};
         if (!empty($xml)) {
             if (!$xml->server) {
                 throw new ConfigurationException("Server not set for environment!");

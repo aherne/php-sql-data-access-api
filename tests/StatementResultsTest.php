@@ -11,7 +11,7 @@ class StatementResultsTest
     
     public function __construct()
     {
-        $detector = new DataSourceDetection(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->servers->sql->local->server);
+        $detector = new DataSourceDetection(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server);
         $connection = new Connection();
         $connection->connect($detector->getDataSource());
         $this->connection = $connection;
