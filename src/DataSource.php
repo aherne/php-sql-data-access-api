@@ -7,7 +7,7 @@ namespace Lucinda\SQL;
 class DataSource
 {
     private $driverName;
-    private $driverOptions;
+    private $driverOptions=[];
     private $host;
     private $port;
     private $userName;
@@ -15,14 +15,40 @@ class DataSource
     private $schema;
     private $charset;
 
+    private $autoCommit;
+    private $persistent;
+    private $timeout;
+
     /**
-     * Sets database server driver name.
+     * Detects data source information.
      *
-     * @param string $driverName
+     * @param \SimpleXMLElement $databaseInfo
+     * @throws ConfigurationException
      */
-    public function setDriverName(string $driverName): void
+    public function __construct(\SimpleXMLElement $databaseInfo)
     {
-        $this->driverName = $driverName;
+        $this->driverName = (string) $databaseInfo["driver"];
+        $this->host = (string) $databaseInfo["host"];
+        $this->port = (int) $databaseInfo["port"];
+        $this->userName = (string) $databaseInfo["username"];
+        $this->password = (string) $databaseInfo["password"];
+        $this->schema = (string) $databaseInfo["schema"];
+        $this->charset = (string) $databaseInfo["charset"];
+
+        if (!$this->driverName || !$this->host || !$this->port || !$this->userName || !$this->password)
+        {
+            throw new ConfigurationException("Attributes are mandatory: driver, host, port, username, password!");
+        }
+
+        if (isset($databaseInfo["autocommit"])) {
+            $this->autoCommit = ((string) $databaseInfo["autocommit"]?true:false);
+        }
+        if (isset($databaseInfo["persistent"])) {
+            $this->persistent = ((string) $databaseInfo["persistent"]?true:false);
+        }
+        if (isset($databaseInfo["timeout"])) {
+            $this->timeout = (int) $databaseInfo["timeout"];
+        }
     }
 
     /**
@@ -36,16 +62,6 @@ class DataSource
     }
 
     /**
-     * Sets database server vendor PDO connection options
-     *
-     * @param array $driverOptions
-     */
-    public function setDriverOptions(array $driverOptions): void
-    {
-        $this->driverOptions = $driverOptions;
-    }
-
-    /**
      * Gets database server vendor PDO connection options
      *
      * @return array
@@ -53,16 +69,6 @@ class DataSource
     public function getDriverOptions(): array
     {
         return $this->driverOptions;
-    }
-
-    /**
-     * Sets database server host name
-     *
-     * @param string $host
-     */
-    public function setHost(string $host): void
-    {
-        $this->host = $host;
     }
 
     /**
@@ -76,16 +82,6 @@ class DataSource
     }
 
     /**
-     * Sets database server port
-     *
-     * @param integer $port
-     */
-    public function setPort(int $port): void
-    {
-        $this->port = $port;
-    }
-
-    /**
      * Gets database server port
      *
      * @return integer
@@ -93,16 +89,6 @@ class DataSource
     public function getPort(): int
     {
         return $this->port;
-    }
-
-    /**
-     * Sets database server user name
-     *
-     * @param string $userName
-     */
-    public function setUserName(string $userName): void
-    {
-        $this->userName = $userName;
     }
 
     /**
@@ -116,16 +102,6 @@ class DataSource
     }
 
     /**
-     * Sets database server user password
-     *
-     * @param string $password
-     */
-    public function setPassword(string $password): void
-    {
-        $this->password = $password;
-    }
-
-    /**
      * Gets database server user password
      *
      * @return string
@@ -133,16 +109,6 @@ class DataSource
     public function getPassword(): string
     {
         return $this->password;
-    }
-
-    /**
-     * Sets database server default schema
-     *
-     * @param string $schema
-     */
-    public function setSchema(string $schema): void
-    {
-        $this->schema = $schema;
     }
 
     /**
@@ -156,16 +122,6 @@ class DataSource
     }
 
     /**
-     * Sets database server default charset
-     *
-     * @param string $charset
-     */
-    public function setCharset(string $charset): void
-    {
-        $this->charset = $charset;
-    }
-
-    /**
      * Gets database server default charset.
      *
      * @return string
@@ -173,5 +129,35 @@ class DataSource
     public function getCharset(): string
     {
         return $this->charset;
+    }
+
+    /**
+     * Gets if autocommit is on/off/default.
+     *
+     * @return bool|null
+     */
+    public function getAutoCommit(): ?bool
+    {
+        return $this->autoCommit;
+    }
+
+    /**
+     * Get if persistent connections are on/off/default.
+     *
+     * @return bool|null
+     */
+    public function getPersistent(): ?bool
+    {
+        return $this->persistent;
+    }
+
+    /**
+     * Gets connection timeout (null if default)
+     *
+     * @return int|null
+     */
+    public function getTimeout(): ?int
+    {
+        return $this->timeout;
     }
 }

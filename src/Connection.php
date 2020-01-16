@@ -45,6 +45,15 @@ class Connection
             // performs connection to PDO
             $this->PDO = new \PDO($dataSource->getDriverName().$settings, $dataSource->getUserName(), $dataSource->getPassword(), $dataSource->getDriverOptions());
             $this->PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            if($dataSource->getAutoCommit()!==null) {
+                $this->PDO->setAttribute(\PDO::ATTR_AUTOCOMMIT, $dataSource->getAutoCommit());
+            }
+            if($dataSource->getPersistent()!==null) {
+                $this->PDO->setAttribute(\PDO::ATTR_PERSISTENT, $dataSource->getPersistent());
+            }
+            if($dataSource->getTimeout()!==null) {
+                $this->PDO->setAttribute(\PDO::ATTR_TIMEOUT, $dataSource->getTimeout());
+            }
         } catch (\PDOException $e) {
             $exception = new ConnectionException($e->getMessage(), $e->getCode());
             $exception->setHostName($dataSource->getHost());
@@ -85,65 +94,6 @@ class Connection
     public function preparedStatement(): PreparedStatement
     {
         return new PreparedStatement($this->PDO);
-    }
-    
-    /**
-     * Sets whether or not statements executed on server are commited by default.
-     *
-     * @param boolean $value
-     */
-    public function setAutoCommit(bool $value): void
-    {
-        $this->PDO->setAttribute(\PDO::ATTR_AUTOCOMMIT, $value);
-    }
-
-    /**
-     * Returns whether or not statements executed on server are commited by default.
-     *
-     * @return boolean
-     */
-    public function getAutoCommit(): bool
-    {
-        return $this->PDO->getAttribute(\PDO::ATTR_AUTOCOMMIT);
-    }
-    
-    /**
-     * Sets connection timeout on database server. (Not supported by all drivers)
-     *
-     * @param integer $value
-     */
-    public function setConnectionTimeout(int $value): void
-    {
-        $this->PDO->setAttribute(\PDO::ATTR_TIMEOUT, $value);
-    }
-
-    /**
-     * Gets connection timeout from database server. (Not supported by all drivers)
-     *
-     * @return integer
-     */
-    public function getConnectionTimeout(): int
-    {
-        return $this->PDO->getAttribute(\PDO::ATTR_TIMEOUT);
-    }
-    
-    /**
-     * Sets whether or not current connection is persistent.
-     * @param boolean $value
-     */
-    public function setPersistent(bool $value): void
-    {
-        $this->PDO->setAttribute(\PDO::ATTR_PERSISTENT, $value);
-    }
-
-    /**
-     * Returns whether or not current connection is persistent.
-     *
-     * @return boolean
-     */
-    public function getPersistent(): bool
-    {
-        return $this->PDO->getAttribute(\PDO::ATTR_PERSISTENT);
     }
     
     /**

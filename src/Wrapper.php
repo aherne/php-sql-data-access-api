@@ -2,7 +2,8 @@
 namespace Lucinda\SQL;
 
 /**
- * Binds SQL Data Access API with MVC STDOUT API (aka Servlets API) in order to detect a DataSource that will be automatically used later on when SQL server is queried
+ * Reads server tags from XML into DataSource objects and injects latter into ConnectionSingleton/ConnectionFactory classes
+ * to be used in querying later on
  */
 class Wrapper
 {
@@ -26,12 +27,10 @@ class Wrapper
                     if (!isset($element["name"])) {
                         throw new ConfigurationException("Attribute 'name' is mandatory for 'server' tag");
                     }
-                    $dsd = new DataSourceDetection($element);
-                    ConnectionFactory::setDataSource((string) $element["name"], $dsd->getDataSource());
+                    ConnectionFactory::setDataSource((string) $element["name"], new DataSource($element));
                 }
             } else {
-                $dsd = new DataSourceDetection($xml["server"]);
-                ConnectionSingleton::setDataSource($dsd->getDataSource());
+                ConnectionSingleton::setDataSource(new DataSource($xml["server"]));
             }
         }
     }

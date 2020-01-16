@@ -88,54 +88,7 @@ class ConnectionTest
         
         return $results;
     }
-        
 
-    public function setAutoCommit()
-    {
-        $this->connection->setAutoCommit(true);
-        return new Result(true);
-    }
-        
-
-    public function getAutoCommit()
-    {
-        return new Result($this->connection->getAutoCommit()===true);
-    }
-        
-
-    public function setConnectionTimeout()
-    {
-        try {
-            $this->connection->setConnectionTimeout(12);
-            return new Result(true);
-        } catch (\Exception $e) {
-            return new Result(strpos($e->getMessage(), "Driver does not support this function"));
-        }
-    }
-        
-
-    public function getConnectionTimeout()
-    {
-        try {
-            return new Result($this->connection->getConnectionTimeout()===12);
-        } catch (\Exception $e) {
-            return new Result(strpos($e->getMessage(), "Driver does not support this function"));
-        }
-    }
-        
-
-    public function setPersistent()
-    {
-        $this->connection->setPersistent(false);
-        return new Result(true);
-    }
-        
-
-    public function getPersistent()
-    {
-        return new Result($this->connection->getPersistent()===false);
-    }
-        
 
     public function keepAlive()
     {
