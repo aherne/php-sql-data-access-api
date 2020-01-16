@@ -124,17 +124,6 @@ Following methods are relevant to connection management:
 | reconnect | void | void | Closes then opens connection to database server based on stored data source. Throws [Lucinda\SQL\ConnectionException](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionException.php) if connection fails! |
 | keepAlive | void | void | Restores connection to database server in case it got closed unexpectedly. Throws [Lucinda\SQL\ConnectionException](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionException.php) if connection fails! |
 
-Following methods are relevant for configuring connection:
-
-| Method | Arguments | Returns | Description |
-| --- | --- | --- | --- |
-| setAutoCommit | bool $value | void | Sets whether or not statements executed on server are commited by default. |
-| getAutoCommit | void | bool $value | Gets whether or not statements executed on server are commited by default. |
-| setConnectionTimeout | int $value | void | Sets connection timeout on database server. |
-| getConnectionTimeout | void | int $value | Gets connection timeout on database server. |
-| setPersistent | bool $value | void | Sets whether or not current connection is persistent. |
-| getPersistent | void | bool $value | Sets whether or not current connection is persistent. |
-
 Following methods are relevant for querying:
 
 | Method | Arguments | Returns | Description |
