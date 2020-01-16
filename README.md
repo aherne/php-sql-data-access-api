@@ -80,14 +80,59 @@ Both classes above insure a single [Lucinda\SQL\Connection](https://github.com/a
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
 | static setDataSource | [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/DataSource.php) | void | Sets data source detected beforehand. Done automatically by API! |
-| static getInstance | void | [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) | Gets connection (protected by a singleton) to query later on. |
+| static getInstance | void | [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) | Gets single connection to query later on. |
 | __destruct | void | void | Automatically closes connection when it becomes idle. Done automatically by API! |
+
+To get a connection using above simply run:
+
+```php
+$connection = Lucinda\SQL\ConnectionSingleton::getConnection();
+// now query
+```
 
 [Lucinda\SQL\ConnectionFactory](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionFactory.php) defines following public methods:
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
 | static setDataSource | string $serverName, [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/DataSource.php) | void | Sets data source detected beforehand per value of *name* attribute @ **server** tag. Done automatically by API! |
-| static getInstance | string $serverName | [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) | Gets connection (protected by a singleton) to query later on per value of *name* attribute @ **server** tag. |
+| static getInstance | string $serverName | [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) | Gets single connection per value of *name* attribute @ **server** tag  to query later on. |
 | __destruct | void | void | Automatically closes each connection when it becomes idle. Done automatically by API! |
 
+To get a connection using above simply run:
+
+```php
+$connection = Lucinda\SQL\ConnectionFactory::getConnection(SERVER_NAME);
+// now query
+```
+
+## Connection
+
+Now that a [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) is retrieved, you are able to query database via following public methods:
+
+Following methods are relevant to connection management:
+
+| Method | Arguments | Returns | Description |
+| --- | --- | --- | --- |
+| connect | void | --- | --- |
+| reconnect | void | --- | --- |
+| keepAlive | void | --- | --- |
+| disconnect | void | --- | --- |
+
+Following methods are relevant for configuring connection:
+
+| Method | Arguments | Returns | Description |
+| --- | --- | --- | --- |
+| setAutoCommit | bool $value | void | Sets whether or not statements executed on server are commited by default. |
+| getAutoCommit | void | bool $value | Gets whether or not statements executed on server are commited by default. |
+| setConnectionTimeout | int $value | void | Sets connection timeout on database server. |
+| getConnectionTimeout | void | int $value | Gets connection timeout on database server. |
+| setPersistent | bool $value | void | Sets whether or not current connection is persistent. |
+| getPersistent | void | bool $value | Sets whether or not current connection is persistent. |
+
+Following methods are relevant to querying:
+
+| Method | Arguments | Returns | Description |
+| --- | --- | --- | --- |
+| statement | void | [Lucinda\SQL\Statement](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Statement.php) | Creates a statement to use in querying. |
+| preparedStatement | void | [Lucinda\SQL\PreparedStatement](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/PreparedStatement.php) | Creates a prepared statement to use in querying. |
+| transaction | void | [Lucinda\SQL\Transaction](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Transaction.php) | Creates a transaction wrap above operations with. |
