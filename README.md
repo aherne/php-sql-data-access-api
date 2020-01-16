@@ -6,7 +6,7 @@ to shield complexity of working with different SQL vendors and provide a simple 
 The whole idea of working with SQL databases (vendors) is reduced to following steps:
 
 - **[configuration](#configuration)**: setting up an XML file where SQL vendors used by your site are configured per development environment
-- **[data source detection](#data-source-detection)**: using [Lucinda\SQL\Wrapper](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Wrapper.php) to read above XML based on development environment, compile [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/DataSource.php) object(s) storing connection information and inject them statically into
+- **[initialization](#initialization)**: using [Lucinda\SQL\Wrapper](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Wrapper.php) to read above XML based on development environment, compile [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/DataSource.php) object(s) storing connection information and inject them statically into
 [Lucinda\SQL\ConnectionSingleton](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionSingleton.php) or [Lucinda\SQL\ConnectionFactory](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionFactory.php) classes
 - **[connection](#connection)**: using the two classes above to connect to database(s) via [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) object(s)
 - **[querying](#querying)**: using object created above to query database via [Lucinda\SQL\Statement](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Statement.php) or [Lucinda\SQL\PreparedStatement](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/PreparedStatement.php) objects, able to be wrapped with [Lucinda\SQL\Transaction](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Transaction.php) operations to insure data consistency
@@ -58,4 +58,36 @@ Example:
     </live>
 </sql>
 ```
+
+## Initialization
+
+Once you have completed step above, you need to run this in order to be able to connect and query database(s) later on:
+
+```php
+new Lucinda\SQL\Wrapper(simplexml_load_file(XML_FILE_NAME), DEVELOPMENT_ENVIRONMENT);
+```
+
+This will wrap each **server** tag found for current development environment into [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/DataSource.php) objects and inject them statically into:
+
+- [Lucinda\SQL\ConnectionSingleton](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionSingleton.php): if your application uses a single SQL server per environment (the usual case)
+- [Lucinda\SQL\ConnectionFactory](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionFactory.php): if your application uses multiple SQL servers per environment (in which case **server** tags must have *name* attribute)
+
+Both classes above insure a single [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) is reused per server throughout session (input-output request flow) duration.
+
+[Lucinda\SQL\ConnectionSingleton](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionSingleton.php) defines following public methods:
+
+
+| Method | Arguments | Returns | Description |
+| --- | --- | --- | --- |
+| static setDataSource | [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/DataSource.php) | void | Sets data source detected beforehand. Done automatically by API! |
+| static getInstance | void | [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) | Gets connection (protected by a singleton) to query later on. |
+| __destruct | void | void | Automatically closes connection when it becomes idle. Done automatically by API! |
+
+[Lucinda\SQL\ConnectionFactory](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionFactory.php) defines following public methods:
+
+| Method | Arguments | Returns | Description |
+| --- | --- | --- | --- |
+| static setDataSource | string $serverName, [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/DataSource.php) | void | Sets data source detected beforehand per value of *name* attribute @ **server** tag. Done automatically by API! |
+| static getInstance | string $serverName | [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) | Gets connection (protected by a singleton) to query later on per value of *name* attribute @ **server** tag. |
+| __destruct | void | void | Automatically closes each connection when it becomes idle. Done automatically by API! |
 
