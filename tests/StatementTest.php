@@ -14,7 +14,7 @@ class StatementTest
         $detector = new DataSourceDetection(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server);
         $connection = new Connection();
         $connection->connect($detector->getDataSource());
-        $this->object = $connection->createStatement();
+        $this->object = $connection->statement();
     }
 
     public function quote()

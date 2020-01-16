@@ -74,35 +74,39 @@ This will wrap each **server** tag found for current development environment int
 
 Both classes above insure a single [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) is reused per server throughout session (input-output request flow) duration.
 
+### ConnectionSingleton
+
 [Lucinda\SQL\ConnectionSingleton](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionSingleton.php) defines following public methods:
 
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
 | static setDataSource | [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/DataSource.php) | void | Sets data source detected beforehand. Done automatically by API! |
-| static getInstance | void | [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) | Gets single connection to query later on. |
+| static getInstance | void | [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) | Connects to server based on above data source ONCE and returns connection for later querying. Throws [Lucinda\SQL\ConnectionException](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionException.php) if connection fails! |
 | __destruct | void | void | Automatically closes connection when it becomes idle. Done automatically by API! |
 
-To get a connection using above simply run:
+Usage example:
 
 ```php
-$connection = Lucinda\SQL\ConnectionSingleton::getConnection();
-// now query
+$connection = Lucinda\SQL\ConnectionSingleton::getInstance();
+$connection->statement()->execute("UPDATE users SET name='John' WHERE name='Jane'");
 ```
+
+### ConnectionFactory
 
 [Lucinda\SQL\ConnectionFactory](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionFactory.php) defines following public methods:
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
 | static setDataSource | string $serverName, [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/DataSource.php) | void | Sets data source detected beforehand per value of *name* attribute @ **server** tag. Done automatically by API! |
-| static getInstance | string $serverName | [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) | Gets single connection per value of *name* attribute @ **server** tag  to query later on. |
+| static getInstance | string $serverName | [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) | Connects to server based on above data source ONCE and returns connection for later querying. Throws [Lucinda\SQL\ConnectionException](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionException.php) if connection fails! |
 | __destruct | void | void | Automatically closes each connection when it becomes idle. Done automatically by API! |
 
-To get a connection using above simply run:
+Usage example:
 
 ```php
-$connection = Lucinda\SQL\ConnectionFactory::getConnection(SERVER_NAME);
-// now query
+$connection = Lucinda\SQL\ConnectionFactory::getInstance("myServer");
+$conection->statement()->execute("UPDATE users SET name='John' WHERE name='Jane'");
 ```
 
 ## Connection
@@ -136,3 +140,143 @@ Following methods are relevant for querying:
 | statement | void | [Lucinda\SQL\Statement](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Statement.php) | Creates a statement to use in querying. |
 | preparedStatement | void | [Lucinda\SQL\PreparedStatement](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/PreparedStatement.php) | Creates a prepared statement to use in querying. |
 | transaction | void | [Lucinda\SQL\Transaction](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Transaction.php) | Creates a transaction wrap above operations with. |
+
+## Querying
+
+Using [Lucinda\SQL\Statement](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Statement.php), [Lucinda\SQL\PreparedStatement](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/PreparedStatement.php) and [Lucinda\SQL\Transaction](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Transaction.php) objects returned by *statement*, *preparedStatement* and *transaction* methods of [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) object, users are finally able to execute queries, wrapping them in transactions if needed, then process execution results using [Lucinda\SQL\StatementResults](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/StatementResults.php).
+
+### Statement
+
+[Lucinda\SQL\Statement](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Statement.php) runs normal SQL unprepared statements and comes with following public methods:
+
+
+| Method | Arguments | Returns | Description |
+| --- | --- | --- | --- |
+| quote | mixed $value | void | Escapes and quotes value against SQL injection. |
+| execute | string $query | [Lucinda\SQL\StatementResults](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/StatementResults.php) | Executes query and returns results. Throws [Lucinda\SQL\StatementException](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/StatementException.php) if execution fails! |
+
+Usage example:
+
+```php
+$connection = Lucinda\SQL\ConnectionSingleton::getInstance();
+$statement = $connection->statement();
+$resultSet = $statement->execute("SELECT id FROM users WHERE name='".$statement->quote($name)."'");
+```
+
+### PreparedStatement
+
+[Lucinda\SQL\PreparedStatement](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/PreparedStatement.php) runs SQL prepared statements and comes with following public methods:
+
+| Method | Arguments | Returns | Description |
+| --- | --- | --- | --- |
+| prepare | string $query | void |  Prepares query for execution. |
+| bind | string $parameter, mixed $value, int $dataType=\PDO::PARAM_STR | void | Binds parameter to prepared query. |
+| execute | array $boundParameters = array()  | [Lucinda\SQL\StatementResults](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/StatementResults.php) | Executes query and returns results. Throws [Lucinda\SQL\StatementException](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/StatementException.php) if execution fails! |
+
+Usage example:
+
+```php
+$connection = Lucinda\SQL\ConnectionSingleton::getInstance();
+$preparedStatement = $connection->preparedStatement();
+$preparedStatement->prepare("SELECT id FROM users WHERE name=:name");
+$preparedStatement->bind(":name", $name);
+$resultSet = $preparedStatement->execute();
+```
+
+### Transaction
+
+[Lucinda\SQL\Transaction](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Transaction.php) can wrap *execute* methods above in transactions, in order to maintain data integrity, and thus comes with following public methods:
+
+| Method | Arguments | Returns | Description |
+| --- | --- | --- | --- |
+| begin | void | void | Starts a transaction. |
+| commit | void | void | Commits transaction. |
+| rollback | void | void | Rolls back transaction. |
+
+Usage example:
+
+```php
+$connection = Lucinda\SQL\ConnectionSingleton::getInstance();
+$transaction = $connection->transaction();
+$transaction->begin();
+$connection->statement()->execute("UPDATE users SET name='John Doe' WHERE id=1");
+$transaction->commit();
+```
+
+## Processing
+
+Once an SQL statement was executed via *execute* methods above, users are able to process results based on [Lucinda\SQL\StatementResults](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/StatementResults.php) object returned. This class comes with following public methods:
+
+| Method | Arguments | Returns | Description |
+| --- | --- | --- | --- |
+| getInsertId | void | int | Gets last insert id following INSERT statement execution. |
+| getAffectedRows | void | int | Gets affected rows following UPDATE/DELETE statement execution. |
+| toValue | void | string | Gets value of first column & row in resultset following SELECT statement execution. |
+| toRow | void | array | Gets current row from resultset as column-value associative array following SELECT statement execution. |
+| toColumn | void | array | Gets first column in resulting rows following SELECT statement execution. |
+| toMap | string $columnKeyName, string $columnValueName | array | Gets two columns from resulting rows, where value of one becomes key and another as value, following SELECT statement execution. |
+| toList | string $columnKeyName, string $columnValueName | array | Gets all resulting rows, each as column-value associative array, following SELECT statement execution. |
+
+### INSERT
+
+Example of processing results of an INSERT query:
+
+```php
+$connection = Lucinda\SQL\ConnectionSingleton::getInstance();
+$resultSet = $connection->statement("INSERT INTO users (first_name, last_name) VALUES ('John', 'Doe')");
+$lastInsertID = $resultSet->getInsertId();
+```
+
+### UPDATE/DELETE
+
+Example of processing results of an UPDATE/DELETE query:
+
+```php
+$connection = Lucinda\SQL\ConnectionSingleton::getInstance();
+$resultSet = $connection->statement("UPDATE users SET first_name='Jane' WHERE id=1");
+if($resultSet->getAffectedRows()>0) {
+    // update occurred
+}
+```
+
+### SELECT
+
+Example of getting a single value from SELECT resultset:
+
+```php
+$connection = Lucinda\SQL\ConnectionSingleton::getInstance();
+$firstName = $connection->statement("SELECT first_name FROM users WHERE id=1")->toValue();
+```
+
+Example of parsing SELECT resultset row by row:
+
+```php
+$connection = Lucinda\SQL\ConnectionSingleton::getInstance();
+$resultSet = $connection->statement("SELECT * FROM users");
+while ($row = $resultSet->toRow()) {
+    // process row
+}
+```
+
+Example of getting all values of first column from SELECT resultset:
+
+```php
+$connection = Lucinda\SQL\ConnectionSingleton::getInstance();
+$ids = $connection->statement("SELECT id FROM users")->toColumn();
+```
+
+Example of getting all rows from SELECT resultset as array where value of first becomes key and value of second becomes value:
+
+```php
+$connection = Lucinda\SQL\ConnectionSingleton::getInstance();
+$users = $connection->statement("SELECT id, name FROM users")->toMap("id", "name");
+// above is an array where id of user becomes key and name becomes value
+```
+
+Example of getting all values from SELECT resultset:
+
+```php
+$connection = Lucinda\SQL\ConnectionSingleton::getInstance();
+$users = $connection->statement("SELECT * FROM users")->toList();
+// above is an array containing all rows, each as column-value associative array
+```

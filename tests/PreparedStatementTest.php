@@ -14,7 +14,7 @@ class PreparedStatementTest
         $detector = new DataSourceDetection(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server);
         $connection = new Connection();
         $connection->connect($detector->getDataSource());
-        $this->object = $connection->createPreparedStatement();
+        $this->object = $connection->preparedStatement();
     }
 
     public function prepare()

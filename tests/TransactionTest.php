@@ -27,9 +27,9 @@ class TransactionTest
     {
         $value = microtime(true);
         $this->connection->transaction()->begin();
-        $this->connection->createStatement()->execute("INSERT INTO dump (value) VALUES ('".$value."')");
+        $this->connection->statement()->execute("INSERT INTO dump (value) VALUES ('".$value."')");
         $this->connection->transaction()->commit();
-        return new Result($this->connection->createStatement()->execute("SELECT id FROM dump WHERE value='".$value."'")->toValue());
+        return new Result($this->connection->statement()->execute("SELECT id FROM dump WHERE value='".$value."'")->toValue());
     }
         
 
@@ -37,8 +37,8 @@ class TransactionTest
     {
         $value = microtime(true)."X";
         $this->connection->transaction()->begin();
-        $this->connection->createStatement()->execute("INSERT INTO dump (value) VALUES ('".$value."')");
+        $this->connection->statement()->execute("INSERT INTO dump (value) VALUES ('".$value."')");
         $this->connection->transaction()->rollback();
-        return new Result($this->connection->createStatement()->execute("SELECT id FROM dump WHERE value='".$value."'")->toValue()?false:true);
+        return new Result($this->connection->statement()->execute("SELECT id FROM dump WHERE value='".$value."'")->toValue()?false:true);
     }
 }

@@ -18,6 +18,6 @@ class ConnectionSingletonTest
     public function getInstance()
     {
         $connection = ConnectionSingleton::getInstance();
-        return new Result($connection->createStatement()->execute("SELECT first_name FROM users WHERE id=1")->toValue()=="John");
+        return new Result($connection->statement()->execute("SELECT first_name FROM users WHERE id=1")->toValue()=="John");
     }
 }

@@ -18,6 +18,6 @@ class ConnectionFactoryTest
     public function getInstance()
     {
         $connection = ConnectionFactory::getInstance("local");
-        return new Result($connection->createStatement()->execute("SELECT first_name FROM users WHERE id=1")->toValue()=="John");
+        return new Result($connection->statement()->execute("SELECT first_name FROM users WHERE id=1")->toValue()=="John");
     }
 }

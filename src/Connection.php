@@ -71,7 +71,7 @@ class Connection
      *
      * @return Statement
      */
-    public function createStatement(): Statement
+    public function statement(): Statement
     {
         return new Statement($this->PDO);
     }
@@ -82,7 +82,7 @@ class Connection
      *
      * @return PreparedStatement
      */
-    public function createPreparedStatement(): PreparedStatement
+    public function preparedStatement(): PreparedStatement
     {
         return new PreparedStatement($this->PDO);
     }

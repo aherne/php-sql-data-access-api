@@ -43,17 +43,17 @@ class ConnectionTest
     {
         $transaction = $this->connection->transaction();
         $transaction->begin();
-        $this->connection->createStatement()->execute("UPDATE users SET first_name='Jones' WHERE id=1");
+        $this->connection->statement()->execute("UPDATE users SET first_name='Jones' WHERE id=1");
         $transaction->rollback();
-        return new Result($this->connection->createStatement()->execute("SELECT first_name FROM users WHERE id=1")->toValue()=="John");
+        return new Result($this->connection->statement()->execute("SELECT first_name FROM users WHERE id=1")->toValue()=="John");
     }
         
 
-    public function createStatement()
+    public function statement()
     {
         $results = [];
         
-        $statement = $this->connection->createStatement();
+        $statement = $this->connection->statement();
         
         try {
             $statement->execute("SELECT first_name FROM users WHERE iad=1");
@@ -68,13 +68,13 @@ class ConnectionTest
     }
         
 
-    public function createPreparedStatement()
+    public function preparedStatement()
     {
         $results = [];
         
         
         try {
-            $statement = $this->connection->createPreparedStatement();
+            $statement = $this->connection->preparedStatement();
             $statement->prepare("SELECT first_name FROM users WHERE iad=:id");
             $statement->execute([":id"=>1]);
             $results[] = new Result(false, "incorrect query");
@@ -82,7 +82,7 @@ class ConnectionTest
             $results[] = new Result(true, "incorrect query");
         }
         
-        $statement = $this->connection->createPreparedStatement();
+        $statement = $this->connection->preparedStatement();
         $statement->prepare("SELECT first_name FROM users WHERE id=:id");
         $results[] = new Result($statement->execute([":id"=>1])->toValue()=="John", "correct query");
         
