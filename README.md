@@ -113,10 +113,10 @@ Following methods are relevant to connection management:
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
-| connect | void | --- | --- |
-| reconnect | void | --- | --- |
-| keepAlive | void | --- | --- |
-| disconnect | void | --- | --- |
+| connect | [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/DataSource.php) | void | Connects to database server based on data source. Throws [Lucinda\SQL\ConnectionException](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionException.php) if connection fails! |
+| disconnect | void | void | Closes connection to database server. |
+| reconnect | void | void | Closes then opens connection to database server based on stored data source. Throws [Lucinda\SQL\ConnectionException](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionException.php) if connection fails! |
+| keepAlive | void | void | Restores connection to database server in case it got closed unexpectedly. Throws [Lucinda\SQL\ConnectionException](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionException.php) if connection fails! |
 
 Following methods are relevant for configuring connection:
 
@@ -129,7 +129,7 @@ Following methods are relevant for configuring connection:
 | setPersistent | bool $value | void | Sets whether or not current connection is persistent. |
 | getPersistent | void | bool $value | Sets whether or not current connection is persistent. |
 
-Following methods are relevant to querying:
+Following methods are relevant for querying:
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
