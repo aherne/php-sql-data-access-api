@@ -1,5 +1,7 @@
 # SQL Data Access API
 
+*Documentation below refers to latest API version, available in branch [v3.0.0](https://github.com/aherne/php-sql-data-access-api/tree/v3.0.0)! For older version in master branch, please check [Lucinda Framework](https://www.lucinda-framework.com/sql-data-access).*
+
 This API is a ultra light weight [Data Access Layer](https://en.wikipedia.org/wiki/Data_access_layer) built on top of [PDO](https://www.php.net/manual/en/book.pdo.php) and inspired by [JDBC](https://en.wikipedia.org/wiki/Java_Database_Connectivity) in terms of architecture. As a data access layer, its purpose is to 
 to shield complexity of working with different SQL vendors and provide a simple and elegant interface for connecting, querying and parsing query results that overcomes PDO design flaws (such as chaotic architecture and functionality).
 
@@ -216,6 +218,8 @@ Once an SQL statement was executed via *execute* methods above, users are able t
 | toColumn | void | array | Gets first column in resulting rows following SELECT statement execution. |
 | toMap | string $columnKeyName, string $columnValueName | array | Gets two columns from resulting rows, where value of one becomes key and another as value, following SELECT statement execution. |
 | toList | string $columnKeyName, string $columnValueName | array | Gets all resulting rows, each as column-value associative array, following SELECT statement execution. |
+
+Usage examples of above methods can be seen below or in [unit tests](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/tests/StatementResultsTest.php)!
 
 ### INSERT
 
