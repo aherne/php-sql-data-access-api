@@ -1,7 +1,7 @@
 <?php
 namespace Test\Lucinda\SQL;
 
-use Lucinda\SQL\DataSourceDetection;
+use Lucinda\SQL\DataSource;
 use Lucinda\SQL\Connection;
 use Lucinda\UnitTest\Result;
 
@@ -11,9 +11,8 @@ class TransactionTest
     
     public function __construct()
     {
-        $detector = new DataSourceDetection(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server);
         $connection = new Connection();
-        $connection->connect($detector->getDataSource());
+        $connection->connect(new DataSource(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server));
         $this->connection = $connection;
     }
 

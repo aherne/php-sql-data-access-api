@@ -2,9 +2,8 @@
 namespace Test\Lucinda\SQL;
 
 use Lucinda\SQL\Connection;
-use Lucinda\SQL\DataSourceDetection;
+use Lucinda\SQL\DataSource;
 use Lucinda\UnitTest\Result;
-use Lucinda\SQL\ConnectionException;
 use Lucinda\SQL\StatementException;
 
 class ConnectionTest
@@ -19,21 +18,11 @@ class ConnectionTest
     public function connect()
     {
         $results = [];
-        
-        $detector = new DataSourceDetection(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server);
-        $dataSource = $detector->getDataSource();
-        
-        $dataSource->setUserName("asd");
-        try {
-            $this->connection->connect($dataSource);
-            $results[] = new Result(false, "incorrect credentials");
-        } catch (ConnectionException $e) {
-            $results[] = new Result(true, "incorrect credentials");
-        }
-        
-        $dataSource->setUserName("unit_test");
+
+        $dataSource = new DataSource(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server);
+
         $this->connection->connect($dataSource);
-        $results[] = new Result(true, "correct credentials");
+        $results[] = new Result(true);
         
         return $results;
     }

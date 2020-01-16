@@ -44,16 +44,6 @@ class Connection
 
             // performs connection to PDO
             $this->PDO = new \PDO($dataSource->getDriverName().$settings, $dataSource->getUserName(), $dataSource->getPassword(), $dataSource->getDriverOptions());
-            $this->PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            if($dataSource->getAutoCommit()!==null) {
-                $this->PDO->setAttribute(\PDO::ATTR_AUTOCOMMIT, $dataSource->getAutoCommit());
-            }
-            if($dataSource->getPersistent()!==null) {
-                $this->PDO->setAttribute(\PDO::ATTR_PERSISTENT, $dataSource->getPersistent());
-            }
-            if($dataSource->getTimeout()!==null) {
-                $this->PDO->setAttribute(\PDO::ATTR_TIMEOUT, $dataSource->getTimeout());
-            }
         } catch (\PDOException $e) {
             $exception = new ConnectionException($e->getMessage(), $e->getCode());
             $exception->setHostName($dataSource->getHost());

@@ -3,14 +3,13 @@ namespace Test\Lucinda\SQL;
 
 use Lucinda\SQL\ConnectionSingleton;
 use Lucinda\UnitTest\Result;
-use Lucinda\SQL\DataSourceDetection;
+use Lucinda\SQL\DataSource;
 
 class ConnectionSingletonTest
 {
     public function setDataSource()
     {
-        $detector = new DataSourceDetection(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server);
-        ConnectionSingleton::setDataSource($detector->getDataSource());
+        ConnectionSingleton::setDataSource(new DataSource(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server));
         return new Result(true);
     }
     

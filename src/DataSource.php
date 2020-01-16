@@ -7,17 +7,13 @@ namespace Lucinda\SQL;
 class DataSource
 {
     private $driverName;
-    private $driverOptions=[];
     private $host;
     private $port;
     private $userName;
     private $password;
     private $schema;
     private $charset;
-
-    private $autoCommit;
-    private $persistent;
-    private $timeout;
+    private $driverOptions=[];
 
     /**
      * Detects data source information.
@@ -40,14 +36,15 @@ class DataSource
             throw new ConfigurationException("Attributes are mandatory: driver, host, port, username, password!");
         }
 
+        $this->driverOptions[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
         if (isset($databaseInfo["autocommit"])) {
-            $this->autoCommit = ((string) $databaseInfo["autocommit"]?true:false);
+            $this->driverOptions[\PDO::ATTR_AUTOCOMMIT] = ((string) $databaseInfo["autocommit"]?1:0);
         }
         if (isset($databaseInfo["persistent"])) {
-            $this->persistent = ((string) $databaseInfo["persistent"]?true:false);
+            $this->driverOptions[\PDO::ATTR_PERSISTENT] = ((string) $databaseInfo["persistent"]?1:0);
         }
-        if (isset($databaseInfo["timeout"])) {
-            $this->timeout = (int) $databaseInfo["timeout"];
+        if (!empty($databaseInfo["timeout"])) {
+            $this->driverOptions[\PDO::ATTR_TIMEOUT] = (int) $databaseInfo["timeout"];
         }
     }
 
@@ -129,35 +126,5 @@ class DataSource
     public function getCharset(): string
     {
         return $this->charset;
-    }
-
-    /**
-     * Gets if autocommit is on/off/default.
-     *
-     * @return bool|null
-     */
-    public function getAutoCommit(): ?bool
-    {
-        return $this->autoCommit;
-    }
-
-    /**
-     * Get if persistent connections are on/off/default.
-     *
-     * @return bool|null
-     */
-    public function getPersistent(): ?bool
-    {
-        return $this->persistent;
-    }
-
-    /**
-     * Gets connection timeout (null if default)
-     *
-     * @return int|null
-     */
-    public function getTimeout(): ?int
-    {
-        return $this->timeout;
     }
 }

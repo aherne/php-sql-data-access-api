@@ -1,7 +1,7 @@
 <?php
 namespace Test\Lucinda\SQL;
 
-use Lucinda\SQL\DataSourceDetection;
+use Lucinda\SQL\DataSource;
 use Lucinda\SQL\ConnectionFactory;
 use Lucinda\UnitTest\Result;
 
@@ -9,8 +9,7 @@ class ConnectionFactoryTest
 {
     public function setDataSource()
     {
-        $detector = new DataSourceDetection(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server);
-        ConnectionFactory::setDataSource("local", $detector->getDataSource());
+        ConnectionFactory::setDataSource("local", new DataSource(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server));
         return new Result(true);
     }
         
