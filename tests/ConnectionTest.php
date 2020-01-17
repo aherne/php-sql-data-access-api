@@ -2,6 +2,7 @@
 namespace Test\Lucinda\SQL;
 
 use Lucinda\SQL\Connection;
+use Lucinda\SQL\ConnectionException;
 use Lucinda\SQL\DataSource;
 use Lucinda\UnitTest\Result;
 use Lucinda\SQL\StatementException;
@@ -17,14 +18,14 @@ class ConnectionTest
 
     public function connect()
     {
-        $results = [];
-
         $dataSource = new DataSource(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server);
 
-        $this->connection->connect($dataSource);
-        $results[] = new Result(true);
-        
-        return $results;
+        try {
+            $this->connection->connect($dataSource);
+            return new Result(true);
+        } catch (ConnectionException $e) {
+            return new Result(false);
+        }
     }
         
 
