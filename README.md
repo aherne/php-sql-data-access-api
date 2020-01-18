@@ -295,6 +295,7 @@ Then you are able to query server, as in below example:
 $connection = Lucinda\SQL\ConnectionSingleton::getInstance();
 $users = $connection->statement("SELECT id, name FROM users")->toMap("id", "name");
 ```
+
 ## Unit Tests
 
 For tests and examples, check following files/folders in API sources:
