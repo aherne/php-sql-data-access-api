@@ -273,3 +273,33 @@ $connection = Lucinda\SQL\ConnectionSingleton::getInstance();
 $users = $connection->statement("SELECT * FROM users")->toList();
 // above is an array containing all rows, each as column-value associative array
 ```
+
+## Installation
+
+First choose a folder where API will be installed then write this command there using console:
+
+```console
+composer require lucinda/sql-data-access
+```
+
+Then create a *configuration.xml* file holding configuration settings (see [configuration](#configuration) above) and a *index.php* file (see [initialization](#initialization) above) in project root with following code:
+
+```php
+require(__DIR__."/vendor/autoload.php");
+new Lucinda\SQL\Wrapper(simplexml_load_file("configuration.xml"), "local");
+```
+
+Then you are able to query server, as in below example:
+
+```php
+$connection = Lucinda\SQL\ConnectionSingleton::getInstance();
+$users = $connection->statement("SELECT id, name FROM users")->toMap("id", "name");
+```
+## Unit Tests
+
+For tests and examples, check following files/folders in API sources:
+
+- [unit-tests.sql](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/unit-tests.xml): SQL commands you need to run ONCE on server (assuming MySQL) before unit tests execution
+- [test.php](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/test.php): runs unit tests in console
+- [unit-tests.xml](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/unit-tests.xml): sets up unit tests and mocks "sql" tag
+- [tests](https://github.com/aherne/php-sql-data-access-api/tree/v3.0.0/tests): unit tests for classes from [src](https://github.com/aherne/php-sql-data-access-api/tree/v3.0.0/src) folder
