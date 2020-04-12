@@ -31,7 +31,7 @@ class DataSource
         $this->schema = (string) $databaseInfo["schema"];
         $this->charset = (string) $databaseInfo["charset"];
 
-        if (!$this->driverName || !$this->host || !$this->port || !$this->userName || !$this->password)
+        if (!$this->driverName || !$this->host || !$this->userName || !$this->password)
         {
             throw new ConfigurationException("Attributes are mandatory: driver, host, port, username, password!");
         }
