@@ -44,6 +44,7 @@ class Connection
 
             // performs connection to PDO
             $this->PDO = new \PDO($dataSource->getDriverName().$settings, $dataSource->getUserName(), $dataSource->getPassword(), $dataSource->getDriverOptions());
+            $this->PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         } catch (\PDOException $e) {
             $exception = new ConnectionException($e->getMessage(), $e->getCode());
             $exception->setHostName($dataSource->getHost());
