@@ -10,11 +10,11 @@ The whole idea of working with SQL databases (vendors) is reduced to following s
 - **[configuration](#configuration)**: setting up an XML file where SQL vendors used by your site are configured per development environment
 - **[initialization](#initialization)**: using [Lucinda\SQL\Wrapper](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Wrapper.php) to read above XML based on development environment, compile [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/DataSource.php) object(s) storing connection information and inject them statically into
 [Lucinda\SQL\ConnectionSingleton](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionSingleton.php) or [Lucinda\SQL\ConnectionFactory](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/ConnectionFactory.php) classes
-- **[connection](#connection)**: using the two classes above to connect to database(s) via [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) object(s)
+- **[connection](#connection)**: using the two classes above to retrieve a connection via [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) object(s)
 - **[querying](#querying)**: using object created above to query database via [Lucinda\SQL\Statement](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Statement.php) or [Lucinda\SQL\PreparedStatement](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/PreparedStatement.php) objects, able to be wrapped with [Lucinda\SQL\Transaction](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Transaction.php) operations to insure data consistency
 - **[processing](#processing)**: using [Lucinda\SQL\StatementResults](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/StatementResults.php) object that comes from query execution to process resultsets, affected rows or last insert id
 
-API is fully PSR-4 compliant, only requiring PHP7.1+ interpreter and SimpleXML extension. To quickly see how it works, check:
+API is fully PSR-4 compliant, only requiring PHP7.1+ interpreter, SimpleXML and PDO extensions. To quickly see how it works, check:
 
 - **[installation](#installation)**: describes how to install API on your computer, in light of steps above
 - **[unit tests](#unit-tests)**: API has 100% Unit Test coverage, using [UnitTest API](https://github.com/aherne/unit-testing) instead of PHPUnit for greater flexibility
@@ -39,7 +39,7 @@ Where:
 - **sql**: holds global connection information for SQL servers used
     - {ENVIRONMENT}: name of development environment (to be replaced with "local", "dev", "live", etc)
         - **server**: stores connection information about a single server via attributes:
-            - *name*: (optional) unique sql server identifier. Required if multiple sql servers are used for same environment!
+            - *name*: (optional) unique identifier. Required if multiple sql servers are used for same environment!
             - *driver*: (mandatory) PDO driver name (pdo drivers)
             - *host*: (mandatory) server host name.
             - *port*: (optional) server port. If not set, default server port is used.
@@ -47,6 +47,9 @@ Where:
             - *password*: (mandatory) password to use in connection.
             - *schema*: (optional) default schema to use after connecting.
             - *charset*: (optional) default charset to use in queries after connecting.
+            - *autocommit*: (not recommended) whether or not INSERT/UPDATE operations should be auto-committed (value can be: 0 or 1). Not supported by all vendors!
+            - *persistent*: (not recommended) whether or not connections should be persisted across sections (value can be: 0 or 1). Not supported by all vendors!
+            - *timeout*: (not recommended) time in seconds by which idle connection is automatically closed. Not supported by all vendors!
 
 Example:
 
@@ -113,9 +116,9 @@ $conection->statement()->execute("UPDATE users SET name='John' WHERE name='Jane'
 
 ## Connection
 
-Now that a [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) is retrieved, you are able to query database via following public methods:
+Now that a [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/src/Connection.php) is retrieved, you are finally able to query database.
 
-Following methods are relevant to connection management:
+Following methods are relevant to connection management (HANDLED BY API AUTOMATICALLY, so **to be used only in niche situations**):
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
@@ -200,13 +203,13 @@ Once an SQL statement was executed via *execute* methods above, users are able t
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
-| getInsertId | void | int | Gets last insert id following INSERT statement execution. |
+| getInsertId | void | string | Gets last insert id following INSERT statement execution. |
 | getAffectedRows | void | int | Gets affected rows following UPDATE/DELETE statement execution. |
 | toValue | void | string | Gets value of first column & row in resultset following SELECT statement execution. |
-| toRow | void | array | Gets current row from resultset as column-value associative array following SELECT statement execution. |
+| toRow | void | array|false | Gets next row from resultset as column-value associative array following SELECT statement execution. |
 | toColumn | void | array | Gets first column in resulting rows following SELECT statement execution. |
 | toMap | string $columnKeyName, string $columnValueName | array | Gets two columns from resulting rows, where value of one becomes key and another as value, following SELECT statement execution. |
-| toList | string $columnKeyName, string $columnValueName | array | Gets all resulting rows, each as column-value associative array, following SELECT statement execution. |
+| toList | void | array | Gets all resulting rows, each as column-value associative array, following SELECT statement execution. |
 
 Usage examples of above methods can be seen below or in [unit tests](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/tests/StatementResultsTest.php)!
 
