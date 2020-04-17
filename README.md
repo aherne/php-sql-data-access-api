@@ -203,13 +203,13 @@ Once an SQL statement was executed via *execute* methods above, users are able t
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
-| getInsertId | void | int | Gets last insert id following INSERT statement execution. |
+| getInsertId | void | string | Gets last insert id following INSERT statement execution. |
 | getAffectedRows | void | int | Gets affected rows following UPDATE/DELETE statement execution. |
 | toValue | void | string | Gets value of first column & row in resultset following SELECT statement execution. |
-| toRow | void | array | Gets current row from resultset as column-value associative array following SELECT statement execution. |
+| toRow | void | array|false | Gets next row from resultset as column-value associative array following SELECT statement execution. |
 | toColumn | void | array | Gets first column in resulting rows following SELECT statement execution. |
 | toMap | string $columnKeyName, string $columnValueName | array | Gets two columns from resulting rows, where value of one becomes key and another as value, following SELECT statement execution. |
-| toList | string $columnKeyName, string $columnValueName | array | Gets all resulting rows, each as column-value associative array, following SELECT statement execution. |
+| toList | void | array | Gets all resulting rows, each as column-value associative array, following SELECT statement execution. |
 
 Usage examples of above methods can be seen below or in [unit tests](https://github.com/aherne/php-sql-data-access-api/blob/v3.0.0/tests/StatementResultsTest.php)!
 

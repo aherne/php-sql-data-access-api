@@ -19,7 +19,7 @@ class StatementResults
      * @var \PDOStatement PDO
      */
     protected $PDOStatement;
-        
+    
     /**
      * Creates an object of statement results.
      *
@@ -37,7 +37,7 @@ class StatementResults
      *
      * @return integer
      */
-    public function getInsertId(): int
+    public function getInsertId(): string
     {
         return $this->PDO->lastInsertId();
     }
@@ -59,15 +59,15 @@ class StatementResults
      */
     public function toValue(): string
     {
-        return $this->PDOStatement->fetchColumn();
+        return (string) $this->PDOStatement->fetchColumn();
     }
-
+    
     /**
      * Fetches row from ResultSet.
      *
-     * @return string[string]
+     * @return string[string]|false
      */
-    public function toRow(): array
+    public function toRow()
     {
         return $this->PDOStatement->fetch(\PDO::FETCH_ASSOC);
     }
