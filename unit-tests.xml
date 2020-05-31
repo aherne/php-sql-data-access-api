@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xml>
+<xml>
+  <unit_tests>
+    <unit_test>
+      <sources path="src" namespace="Lucinda\SQL\"/>
+      <tests path="tests" namespace="Test\Lucinda\SQL\"/>
+    </unit_test>
+  </unit_tests>
+  <sql>
+      <local>
+         <server driver="mysql" host="127.0.0.1" port="3306" username="unit_test" password="test" schema="unit_tests" charset="UTF8"/>
+      </local>
+  </sql>
+</xml>

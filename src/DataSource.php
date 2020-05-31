@@ -7,22 +7,45 @@ namespace Lucinda\SQL;
 class DataSource
 {
     private $driverName;
-    private $driverOptions;
     private $host;
     private $port;
     private $userName;
     private $password;
     private $schema;
     private $charset;
+    private $driverOptions=[];
 
     /**
-     * Sets database server driver name.
+     * Detects data source information.
      *
-     * @param string $driverName
+     * @param \SimpleXMLElement $databaseInfo
+     * @throws ConfigurationException
      */
-    public function setDriverName($driverName)
+    public function __construct(\SimpleXMLElement $databaseInfo)
     {
-        $this->driverName = $driverName;
+        $this->driverName = (string) $databaseInfo["driver"];
+        $this->host = (string) $databaseInfo["host"];
+        $this->port = (int) $databaseInfo["port"];
+        $this->userName = (string) $databaseInfo["username"];
+        $this->password = (string) $databaseInfo["password"];
+        $this->schema = (string) $databaseInfo["schema"];
+        $this->charset = (string) $databaseInfo["charset"];
+
+        if (!$this->driverName || !$this->host || !$this->userName || !$this->password)
+        {
+            throw new ConfigurationException("Attributes are mandatory: driver, host, port, username, password!");
+        }
+
+        $this->driverOptions[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
+        if (isset($databaseInfo["autocommit"])) {
+            $this->driverOptions[\PDO::ATTR_AUTOCOMMIT] = ((string) $databaseInfo["autocommit"]?1:0);
+        }
+        if (isset($databaseInfo["persistent"])) {
+            $this->driverOptions[\PDO::ATTR_PERSISTENT] = ((string) $databaseInfo["persistent"]?1:0);
+        }
+        if (!empty($databaseInfo["timeout"])) {
+            $this->driverOptions[\PDO::ATTR_TIMEOUT] = (int) $databaseInfo["timeout"];
+        }
     }
 
     /**
@@ -30,19 +53,9 @@ class DataSource
      *
      * @return string
      */
-    public function getDriverName()
+    public function getDriverName(): string
     {
         return $this->driverName;
-    }
-
-    /**
-     * Sets database server vendor PDO connection options
-     *
-     * @param array $driverOptions
-     */
-    public function setDriverOptions($driverOptions)
-    {
-        $this->driverOptions = $driverOptions;
     }
 
     /**
@@ -50,19 +63,9 @@ class DataSource
      *
      * @return array
      */
-    public function getDriverOptions()
+    public function getDriverOptions(): array
     {
         return $this->driverOptions;
-    }
-
-    /**
-     * Sets database server host name
-     *
-     * @param string $host
-     */
-    public function setHost($host)
-    {
-        $this->host = $host;
     }
 
     /**
@@ -70,19 +73,9 @@ class DataSource
      *
      * @return string
      */
-    public function getHost()
+    public function getHost(): string
     {
         return $this->host;
-    }
-
-    /**
-     * Sets database server port
-     *
-     * @param integer $port
-     */
-    public function setPort($port)
-    {
-        $this->port = $port;
     }
 
     /**
@@ -90,19 +83,9 @@ class DataSource
      *
      * @return integer
      */
-    public function getPort()
+    public function getPort(): int
     {
         return $this->port;
-    }
-
-    /**
-     * Sets database server user name
-     *
-     * @param string $userName
-     */
-    public function setUserName($userName)
-    {
-        $this->userName = $userName;
     }
 
     /**
@@ -110,19 +93,9 @@ class DataSource
      *
      * @return string
      */
-    public function getUserName()
+    public function getUserName(): string
     {
         return $this->userName;
-    }
-
-    /**
-     * Sets database server user password
-     *
-     * @param string $password
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
     }
 
     /**
@@ -130,19 +103,9 @@ class DataSource
      *
      * @return string
      */
-    public function getPassword()
+    public function getPassword(): string
     {
         return $this->password;
-    }
-
-    /**
-     * Sets database server default schema
-     *
-     * @param string $schema
-     */
-    public function setSchema($schema)
-    {
-        $this->schema = $schema;
     }
 
     /**
@@ -150,19 +113,9 @@ class DataSource
      *
      * @return string
      */
-    public function getSchema()
+    public function getSchema(): string
     {
         return $this->schema;
-    }
-
-    /**
-     * Sets database server default charset
-     *
-     * @param string $charset
-     */
-    public function setCharset($charset)
-    {
-        $this->charset = $charset;
     }
 
     /**
@@ -170,7 +123,7 @@ class DataSource
      *
      * @return string
      */
-    public function getCharset()
+    public function getCharset(): string
     {
         return $this->charset;
     }

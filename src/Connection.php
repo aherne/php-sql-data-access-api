@@ -1,11 +1,6 @@
 <?php
 namespace Lucinda\SQL;
 
-require("DataSource.php");
-require("PreparedStatement.php");
-require("Statement.php");
-require("Transaction.php");
-
 /**
  * Implements a database connection on top of PDO.
 */
@@ -31,7 +26,7 @@ class Connection
      * @param DataSource $dataSource
      * @throws ConnectionException If connection to SQL server fails
      */
-    public function connect(DataSource $dataSource)
+    public function connect(DataSource $dataSource): void
     {
         // open connection
         try {
@@ -51,41 +46,13 @@ class Connection
             $this->PDO = new \PDO($dataSource->getDriverName().$settings, $dataSource->getUserName(), $dataSource->getPassword(), $dataSource->getDriverOptions());
             $this->PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         } catch (\PDOException $e) {
-            throw new ConnectionException($e->getMessage(), $e->getCode(), $dataSource->getHost());
+            $exception = new ConnectionException($e->getMessage(), $e->getCode());
+            $exception->setHostName($dataSource->getHost());
+            throw $exception;
         }
 
         // saves datasource
         $this->dataSource = $dataSource;
-    }
-
-    /**
-     * Restores connection to database server in case it got closed unexpectedly.
-     */
-    public function keepAlive()
-    {
-        $statement = new Statement($this->PDO);
-        try {
-            $statement->execute("SELECT 1");
-        } catch (StatementException $e) {
-            $this->connect($this->dataSource);
-        }
-    }
-
-    /**
-     * Closes connection to database server.
-     */
-    public function disconnect()
-    {
-        $this->PDO = null;
-    }
-    
-    /**
-     * Reconnects to database server.
-     */
-    public function reconnect()
-    {
-        $this->disconnect();
-        $this->connect($this->dataSource);
     }
 
     /**
@@ -94,7 +61,7 @@ class Connection
      *
      * @return Transaction
      */
-    public function transaction()
+    public function transaction(): Transaction
     {
         return new Transaction($this->PDO);
     }
@@ -104,7 +71,7 @@ class Connection
      *
      * @return Statement
      */
-    public function createStatement()
+    public function statement(): Statement
     {
         return new Statement($this->PDO);
     }
@@ -115,67 +82,38 @@ class Connection
      *
      * @return PreparedStatement
      */
-    public function createPreparedStatement()
+    public function preparedStatement(): PreparedStatement
     {
         return new PreparedStatement($this->PDO);
     }
-
+    
     /**
-     * Returns whether or not statements executed on server are commited by default.
-     *
-     * @return boolean
+     * Restores connection to database server in case it got closed unexpectedly.
      */
-    public function getAutoCommit()
+    public function keepAlive(): void
     {
-        return $this->PDO->getAttribute(\PDO::ATTR_AUTOCOMMIT);
+        $statement = new Statement($this->PDO);
+        try {
+            $statement->execute("SELECT 1");
+        } catch (StatementException $e) {
+            $this->connect($this->dataSource);
+        }
     }
-
+    
     /**
-     * Sets whether or not statements executed on server are commited by default.
-     *
-     * @param boolean $value
+     * Reconnects to database server.
      */
-    public function setAutoCommit($value)
+    public function reconnect(): void
     {
-        $this->PDO->setAttribute(\PDO::ATTR_AUTOCOMMIT, $value);
+        $this->disconnect();
+        $this->connect($this->dataSource);
     }
-
+    
     /**
-     * Gets connection timeout from database server. (Not supported by all drivers)
-     *
-     * @return integer
+     * Closes connection to database server.
      */
-    public function getConnectionTimeout()
+    public function disconnect(): void
     {
-        return $this->PDO->getAttribute(\PDO::ATTR_TIMEOUT);
-    }
-
-    /**
-     * Sets connection timeout on database server. (Not supported by all drivers)
-     *
-     * @param integer $value
-     */
-    public function setConnectionTimeout($value)
-    {
-        $this->PDO->setAttribute(\PDO::ATTR_TIMEOUT, $value);
-    }
-
-    /**
-     * Returns whether or not current connection is persistent.
-     *
-     * @return boolean
-     */
-    public function getPersistent()
-    {
-        return $this->PDO->getAttribute(\PDO::ATTR_PERSISTENT);
-    }
-
-    /**
-     * Sets whether or not current connection is persistent.
-     * @param boolean $value
-     */
-    public function setPersistent($value)
-    {
-        $this->PDO->setAttribute(\PDO::ATTR_PERSISTENT, $value);
+        $this->PDO = null;
     }
 }

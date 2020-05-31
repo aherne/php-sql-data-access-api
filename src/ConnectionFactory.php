@@ -30,7 +30,7 @@ class ConnectionFactory
      * @param string $serverName Unique identifier of server you will be connecting to.
      * @param DataSource $dataSource
      */
-    public static function setDataSource($serverName, DataSource $dataSource)
+    public static function setDataSource(string $serverName, DataSource $dataSource): void
     {
         self::$dataSources[$serverName] = $dataSource;
     }
@@ -43,7 +43,7 @@ class ConnectionFactory
      * @throws ConnectionException If connection to database server fails.
      * @return Connection
      */
-    public static function getInstance($serverName)
+    public static function getInstance(string $serverName): Connection
     {
         if (!isset(self::$instances[$serverName])) {
             self::$instances[$serverName] = new ConnectionFactory($serverName);
@@ -55,9 +55,10 @@ class ConnectionFactory
     /**
      * Connects to database automatically.
      *
+     * @param string $serverName Unique identifier of server you will be connecting to.
      * @throws ConnectionException If connection to database server fails.
      */
-    private function __construct($serverName)
+    private function __construct(string $serverName)
     {
         if (!isset(self::$dataSources[$serverName])) {
             throw new Exception("Datasource not set for: ".$serverName);
@@ -71,7 +72,7 @@ class ConnectionFactory
      *
      * @return Connection
      */
-    private function getConnection()
+    private function getConnection(): Connection
     {
         return $this->database_connection;
     }

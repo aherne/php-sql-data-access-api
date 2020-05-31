@@ -42,7 +42,7 @@ class PreparedStatement
      *
      * @param string $query
      */
-    public function prepare($query)
+    public function prepare(string $query): void
     {
         $this->pendingStatement=$query;
         $this->PDOStatement = $this->PDO->prepare($query);
@@ -52,16 +52,16 @@ class PreparedStatement
      * Binds a value to a prepared statement.
      *
      * @param string $parameter
-     * @param mixed $value
+     * @param string $value
      * @param integer $dataType
      * @throws Exception If developer tries to bind a parameter to a query that wasn't prepared.
      */
-    public function bind($parameter, $value, $dataType=\PDO::PARAM_STR)
+    public function bind(string $parameter, $value, int $dataType=\PDO::PARAM_STR): void
     {
         if (!$this->pendingStatement) {
             throw new Exception("Cannot bind anything on a statement that hasn't been prepared!");
         }
-        $this->PDOStatement->bindValue($parameter, $value, $dataType);
+        $this->PDOStatement->bindValue($parameter, $value, \PDO::PARAM_STR);
     }
     
     /**
@@ -72,7 +72,7 @@ class PreparedStatement
      * @throws Exception If developer tries to execute a query that wasn't prepared.
      * @throws StatementException If query execution fails.
      */
-    public function execute($boundParameters = array())
+    public function execute(array $boundParameters = array()): StatementResults
     {
         if (!$this->pendingStatement) {
             throw new Exception("Cannot execute a statement that hasn't been prepared!");
@@ -84,7 +84,9 @@ class PreparedStatement
                 $this->PDOStatement->execute();
             }
         } catch (\PDOException $e) {
-            throw new StatementException($e->getMessage(), $e->getCode(), $this->pendingStatement);
+            $exception = new StatementException($e->getMessage(), (int) $e->getCode());
+            $exception->setQuery($this->pendingStatement);
+            throw $exception;
         }
         return new StatementResults($this->PDO, $this->PDOStatement);
     }

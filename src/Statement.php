@@ -26,10 +26,10 @@ class Statement
     /**
      * Quotes a string for use in a query.
      *
-     * @param mixed $value
+     * @param string $value
      * @return string
      */
-    public function quote($value)
+    public function quote($value): string
     {
         return $this->PDO->quote($value);
     }
@@ -41,13 +41,15 @@ class Statement
      * @throws StatementException If query execution fails
      * @return StatementResults
      */
-    public function execute($query)
+    public function execute(string $query): StatementResults
     {
         $stmt=null;
         try {
             $stmt = $this->PDO->query($query);
         } catch (\PDOException $e) {
-            throw new StatementException($e->getMessage(), $e->getCode(), $query);
+            $exception = new StatementException($e->getMessage(), (int) $e->getCode());
+            $exception->setQuery($query);
+            throw $exception;
         }
         return new StatementResults($this->PDO, $stmt);
     }

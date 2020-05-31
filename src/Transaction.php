@@ -26,7 +26,7 @@ class Transaction
     /**
      * Starts a transaction
      */
-    public function begin()
+    public function begin(): void
     {
         $this->PDO->beginTransaction();
     }
@@ -34,7 +34,7 @@ class Transaction
     /**
      * Commits transaction.
      */
-    public function commit()
+    public function commit(): void
     {
         $this->PDO->commit();
     }
@@ -42,7 +42,7 @@ class Transaction
     /**
      * Rolls back transaction.
      */
-    public function rollback()
+    public function rollback(): void
     {
         $this->PDO->rollBack();
     }

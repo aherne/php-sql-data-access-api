@@ -19,7 +19,7 @@ class StatementResults
      * @var \PDOStatement PDO
      */
     protected $PDOStatement;
-        
+    
     /**
      * Creates an object of statement results.
      *
@@ -37,7 +37,7 @@ class StatementResults
      *
      * @return integer
      */
-    public function getInsertId()
+    public function getInsertId(): string
     {
         return $this->PDO->lastInsertId();
     }
@@ -47,7 +47,7 @@ class StatementResults
      *
      * @return integer
      */
-    public function getAffectedRows()
+    public function getAffectedRows(): int
     {
         return $this->PDOStatement->rowCount();
     }
@@ -57,15 +57,15 @@ class StatementResults
      *
      * @return string
      */
-    public function toValue()
+    public function toValue(): string
     {
-        return $this->PDOStatement->fetchColumn();
+        return (string) $this->PDOStatement->fetchColumn();
     }
-
+    
     /**
      * Fetches row from ResultSet.
      *
-     * @return string[string]
+     * @return string[string]|false
      */
     public function toRow()
     {
@@ -77,7 +77,7 @@ class StatementResults
      *
      * @return string[]
      */
-    public function toColumn()
+    public function toColumn(): array
     {
         return $this->PDOStatement->fetchAll(\PDO::FETCH_COLUMN, 0);
     }
@@ -89,7 +89,7 @@ class StatementResults
      * @param string $columnValueName
      * @return array
      */
-    public function toMap($columnKeyName, $columnValueName)
+    public function toMap(string $columnKeyName, string $columnValueName): array
     {
         $output=array();
         while ($row = $this->PDOStatement->fetch(\PDO::FETCH_ASSOC)) {
@@ -103,7 +103,7 @@ class StatementResults
      *
      * @return array
      */
-    public function toList()
+    public function toList(): array
     {
         return $this->PDOStatement->fetchAll(\PDO::FETCH_ASSOC);
     }
