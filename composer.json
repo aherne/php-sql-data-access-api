@@ -1,9 +1,9 @@
 {
     "name": "lucinda/sql-data-access",
     "type": "library",
-    "description": "Abstracts all communication with SQL servers on top of PDO",
-    "keywords": ["sql","data access"],
-    "homepage": "http://www.lucinda-framework.com/sql-data-access",
+    "description": "API abstracting communication with SQL providers (eg: MySQL) on top of PDO inspired by Java JDBC",
+    "keywords": ["sql","data access","querying", "processing"],
+    "homepage": "https://github.com/aherne/php-sql-data-access-api",
     "license": "MIT",
     "require": {
         "php": "^7.1",
