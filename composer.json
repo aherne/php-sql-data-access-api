@@ -15,7 +15,8 @@
     },
     "autoload": {
     	"psr-4": {
-            "Lucinda\\SQL\\": "src/"
+            "Lucinda\\SQL\\": "src/",
+            "Test\\Lucinda\\SQL\\": "tests/"
     	}
     },
     "authors": [
