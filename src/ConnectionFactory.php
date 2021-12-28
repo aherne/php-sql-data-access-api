@@ -11,18 +11,18 @@ class ConnectionFactory
      *
      * @var array
      */
-    private static $instances;
+    private static array $instances = [];
     
     /**
      * Stores registered data sources.
      * @var array
      */
-    private static $dataSources;
+    private static array $dataSources = [];
     
     /**
      * @var Connection
      */
-    private $database_connection = null;
+    private Connection $database_connection;
     
     /**
      * Registers a data source object encapsulatings connection info based on unique server identifier.
@@ -56,7 +56,7 @@ class ConnectionFactory
      * Connects to database automatically.
      *
      * @param string $serverName Unique identifier of server you will be connecting to.
-     * @throws ConnectionException If connection to database server fails.
+     * @throws ConnectionException|Exception If connection to database server fails.
      */
     private function __construct(string $serverName)
     {

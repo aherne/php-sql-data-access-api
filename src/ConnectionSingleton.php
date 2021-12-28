@@ -7,19 +7,19 @@ namespace Lucinda\SQL;
 class ConnectionSingleton
 {
     /**
-     * @var DataSource
+     * @var ?DataSource
      */
-    private static $dataSource = null;
+    private static ?DataSource $dataSource = null;
     
     /**
-     * @var ConnectionSingleton
+     * @var ?ConnectionSingleton
      */
-    private static $instance = null;
+    private static ?ConnectionSingleton $instance = null;
     
     /**
      * @var Connection
      */
-    private $database_connection = null;
+    private Connection $database_connection;
     
     /**
      * Registers a data source object encapsulatings connection info.
@@ -35,7 +35,6 @@ class ConnectionSingleton
      * Opens connection to database server (if not already open) according to DataSource and returns a Connection object.
      *
      * @return Connection
-     * @throws ConnectionException If connection to database server fails.
      */
     public static function getInstance(): Connection
     {
@@ -48,7 +47,7 @@ class ConnectionSingleton
     /**
      * Connects to database automatically.
      *
-     * @throws ConnectionException If connection to database server fails.
+     * @throws ConnectionException|Exception If connection to database server fails.
      */
     private function __construct()
     {

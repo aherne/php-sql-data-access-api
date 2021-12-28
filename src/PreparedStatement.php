@@ -11,21 +11,21 @@ class PreparedStatement
      *
      * @var \PDO PDO
      */
-    protected $PDO;
+    protected \PDO $PDO;
     
     /**
      * Variable containing an instance of PDOStatement class.
      *
      * @var \PDOStatement PDO
      */
-    protected $PDOStatement;
+    protected \PDOStatement $PDOStatement;
     
     /**
      * Statement to be prepared.
      *
      * @var string $pendingStatement
      */
-    protected $pendingStatement;
+    protected string $pendingStatement;
     
     /**
      * Creates a SQL prepared statement object automatically.
@@ -52,16 +52,16 @@ class PreparedStatement
      * Binds a value to a prepared statement.
      *
      * @param string $parameter
-     * @param string $value
+     * @param string|int $value
      * @param integer $dataType
      * @throws Exception If developer tries to bind a parameter to a query that wasn't prepared.
      */
-    public function bind(string $parameter, $value, int $dataType=\PDO::PARAM_STR): void
+    public function bind(string $parameter, string|int $value, int $dataType=\PDO::PARAM_STR): void
     {
         if (!$this->pendingStatement) {
             throw new Exception("Cannot bind anything on a statement that hasn't been prepared!");
         }
-        $this->PDOStatement->bindValue($parameter, $value, \PDO::PARAM_STR);
+        $this->PDOStatement->bindValue($parameter, $value, $dataType);
     }
     
     /**

@@ -6,14 +6,14 @@ namespace Lucinda\SQL;
 */
 class DataSource
 {
-    private $driverName;
-    private $host;
-    private $port;
-    private $userName;
-    private $password;
-    private $schema;
-    private $charset;
-    private $driverOptions=[];
+    private string $driverName;
+    private string $host;
+    private int $port;
+    private string $userName;
+    private string $password;
+    private string $schema;
+    private string $charset;
+    private array $driverOptions=[];
 
     /**
      * Detects data source information.

@@ -9,16 +9,16 @@ class Connection
     /**
      * Variable containing an instance of PDO class.
      *
-     * @var \PDO
+     * @var ?\PDO
      */
-    protected $PDO;
+    protected ?\PDO $PDO = null;
 
     /**
      * Variable containing an instance of DataSource class saved to be used in keep alive.
      *
      * @var DataSource
      */
-    protected $dataSource;
+    protected DataSource $dataSource;
 
     /**
      * Opens connection to database server.
