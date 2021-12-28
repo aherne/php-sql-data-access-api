@@ -61,7 +61,7 @@ class PreparedStatement
         if (!$this->pendingStatement) {
             throw new Exception("Cannot bind anything on a statement that hasn't been prepared!");
         }
-        $this->PDOStatement->bindValue($parameter, $value, \PDO::PARAM_STR);
+        $this->PDOStatement->bindValue($parameter, $value, $dataType);
     }
     
     /**
