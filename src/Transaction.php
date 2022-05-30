@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\SQL;
 
 /**
@@ -9,41 +10,41 @@ class Transaction
     /**
      * Variable containing a PDO instance this class relies on.
      *
-     * @var \PDO $PDO
+     * @var \PDO $pdo
      */
-    protected $PDO;
-    
+    protected $pdo;
+
     /**
      * Sets up a database transaction.
      *
-     * @param \PDO $PDO
+     * @param \PDO $pdo
      */
-    public function __construct(\PDO $PDO)
+    public function __construct(\PDO $pdo)
     {
-        $this->PDO=$PDO;
+        $this->pdo=$pdo;
     }
-    
+
     /**
      * Starts a transaction
      */
     public function begin(): void
     {
-        $this->PDO->beginTransaction();
+        $this->pdo->beginTransaction();
     }
-    
+
     /**
      * Commits transaction.
      */
     public function commit(): void
     {
-        $this->PDO->commit();
+        $this->pdo->commit();
     }
-    
+
     /**
      * Rolls back transaction.
      */
     public function rollback(): void
     {
-        $this->PDO->rollBack();
+        $this->pdo->rollBack();
     }
 }

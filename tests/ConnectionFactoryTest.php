@@ -1,4 +1,5 @@
 <?php
+
 namespace Test\Lucinda\SQL;
 
 use Lucinda\SQL\DataSource;
@@ -12,7 +13,7 @@ class ConnectionFactoryTest
         ConnectionFactory::setDataSource("local", new DataSource(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server));
         return new Result(true);
     }
-        
+
 
     public function getInstance()
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Test\Lucinda\SQL;
 
 use Lucinda\SQL\DataSource;
@@ -8,7 +9,7 @@ use Lucinda\UnitTest\Result;
 class StatementTest
 {
     private $object;
-    
+
     public function __construct()
     {
         $connection = new Connection();
@@ -20,7 +21,7 @@ class StatementTest
     {
         return new Result($this->object->quote("asd")=="'asd'");
     }
-        
+
 
     public function execute()
     {

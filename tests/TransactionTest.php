@@ -1,4 +1,5 @@
 <?php
+
 namespace Test\Lucinda\SQL;
 
 use Lucinda\SQL\DataSource;
@@ -8,7 +9,7 @@ use Lucinda\UnitTest\Result;
 class TransactionTest
 {
     private $connection;
-    
+
     public function __construct()
     {
         $connection = new Connection();
@@ -20,7 +21,7 @@ class TransactionTest
     {
         return new Result(true); // begin can only be tested through commit/rollback
     }
-        
+
 
     public function commit()
     {
@@ -30,7 +31,7 @@ class TransactionTest
         $this->connection->transaction()->commit();
         return new Result($this->connection->statement()->execute("SELECT id FROM dump WHERE value='".$value."'")->toValue());
     }
-        
+
 
     public function rollback()
     {
@@ -38,6 +39,6 @@ class TransactionTest
         $this->connection->transaction()->begin();
         $this->connection->statement()->execute("INSERT INTO dump (value) VALUES ('".$value."')");
         $this->connection->transaction()->rollback();
-        return new Result($this->connection->statement()->execute("SELECT id FROM dump WHERE value='".$value."'")->toValue()?false:true);
+        return new Result($this->connection->statement()->execute("SELECT id FROM dump WHERE value='".$value."'")->toValue() ? false : true);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\SQL;
 
 /**
@@ -11,18 +12,18 @@ class Statement
      *
      * @var \PDO pdo
      */
-    protected $PDO;
-    
+    protected $pdo;
+
     /**
      * Creates a SQL statement object.
      *
-     * @param \PDO $PDO
+     * @param \PDO $pdo
      */
-    public function __construct(\PDO $PDO)
+    public function __construct(\PDO $pdo)
     {
-        $this->PDO = $PDO;
+        $this->pdo = $pdo;
     }
-    
+
     /**
      * Quotes a string for use in a query.
      *
@@ -31,9 +32,9 @@ class Statement
      */
     public function quote($value): string
     {
-        return $this->PDO->quote($value);
+        return $this->pdo->quote($value);
     }
-    
+
     /**
      * Executes a query.
      *
@@ -45,12 +46,12 @@ class Statement
     {
         $stmt=null;
         try {
-            $stmt = $this->PDO->query($query);
+            $stmt = $this->pdo->query($query);
         } catch (\PDOException $e) {
             $exception = new StatementException($e->getMessage(), (int) $e->getCode());
             $exception->setQuery($query);
             throw $exception;
         }
-        return new StatementResults($this->PDO, $stmt);
+        return new StatementResults($this->pdo, $stmt);
     }
 }

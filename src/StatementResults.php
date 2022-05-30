@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\SQL;
 
 /**
@@ -11,37 +12,37 @@ class StatementResults
      *
      * @var \PDO PDO
      */
-    protected $PDO;
-    
+    protected $pdo;
+
     /**
      * Variable containing an instance of PDOStatement class.
      *
      * @var \PDOStatement PDO
      */
-    protected $PDOStatement;
-    
+    protected $pdoStatement;
+
     /**
      * Creates an object of statement results.
      *
-     * @param \PDO $PDO
-     * @param \PDOStatement $PDOStatement
+     * @param \PDO $pdo
+     * @param \PDOStatement $pdoStatement
      */
-    public function __construct(\PDO $PDO, \PDOStatement $PDOStatement)
+    public function __construct(\PDO $pdo, \PDOStatement $pdoStatement)
     {
-        $this->PDO = $PDO;
-        $this->PDOStatement = $PDOStatement;
+        $this->pdo = $pdo;
+        $this->pdoStatement = $pdoStatement;
     }
-    
+
     /**
      * Returns autoincremented id following last SQL INSERT statement.
      *
-     * @return integer
+     * @return int
      */
-    public function getInsertId(): string
+    public function getInsertId(): int
     {
-        return $this->PDO->lastInsertId();
+        return (int) $this->pdo->lastInsertId();
     }
-    
+
     /**
      * Returns the number of rows affected by the last SQL INSERT/UPDATE/DELETE statement
      *
@@ -49,9 +50,9 @@ class StatementResults
      */
     public function getAffectedRows(): int
     {
-        return $this->PDOStatement->rowCount();
+        return $this->pdoStatement->rowCount();
     }
-    
+
     /**
      * Fetches first value of first row from ResultSet.
      *
@@ -59,9 +60,9 @@ class StatementResults
      */
     public function toValue(): string
     {
-        return (string) $this->PDOStatement->fetchColumn();
+        return (string) $this->pdoStatement->fetchColumn();
     }
-    
+
     /**
      * Fetches row from ResultSet.
      *
@@ -69,9 +70,9 @@ class StatementResults
      */
     public function toRow()
     {
-        return $this->PDOStatement->fetch(\PDO::FETCH_ASSOC);
+        return $this->pdoStatement->fetch(\PDO::FETCH_ASSOC);
     }
-    
+
     /**
      * Fetches first column of all rows from ResultSet.
      *
@@ -79,32 +80,33 @@ class StatementResults
      */
     public function toColumn(): array
     {
-        return $this->PDOStatement->fetchAll(\PDO::FETCH_COLUMN, 0);
+        return $this->pdoStatement->fetchAll(\PDO::FETCH_COLUMN, 0);
     }
-    
+
     /**
-     * Fetches all rows from Resultset into a mapping that has row value of $columnKeyName as key and row value of $columnValueName as value.
+     * Fetches all rows from Resultset into a mapping that has row value of $columnKeyName as key and row value of
+     * $columnValueName as value.
      *
      * @param string $columnKeyName
      * @param string $columnValueName
-     * @return array
+     * @return array<mixed>
      */
     public function toMap(string $columnKeyName, string $columnValueName): array
     {
         $output=array();
-        while ($row = $this->PDOStatement->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $this->pdoStatement->fetch(\PDO::FETCH_ASSOC)) {
             $output[$row[$columnKeyName]]=$row[$columnValueName];
         }
         return $output;
     }
-    
+
     /**
      * Fetches all rows from Resultset into a numeric array.
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toList(): array
     {
-        return $this->PDOStatement->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->pdoStatement->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

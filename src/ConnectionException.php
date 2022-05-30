@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\SQL;
 
 /**
@@ -6,8 +7,8 @@ namespace Lucinda\SQL;
  */
 class ConnectionException extends \Exception
 {
-    protected $hostName="";
-        
+    protected string $hostName="";
+
     /**
      * Sets sql server host name in which error has occurred.
      *
@@ -17,7 +18,7 @@ class ConnectionException extends \Exception
     {
         $this->hostName = $hostName;
     }
-    
+
     /**
      * Gets sql server host name in which error has occurred.
      *

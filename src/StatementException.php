@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\SQL;
 
 /**
@@ -6,8 +7,8 @@ namespace Lucinda\SQL;
  */
 class StatementException extends \Exception
 {
-    protected $query;
-    
+    protected string $query = "";
+
     /**
      * Gets value of sql statement that failed
      *
@@ -17,7 +18,7 @@ class StatementException extends \Exception
     {
         $this->query = $query;
     }
-    
+
     /**
      * Gets value of sql statement that failed
      *

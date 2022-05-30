@@ -1,4 +1,5 @@
 <?php
+
 namespace Test\Lucinda\SQL;
 
 use Lucinda\SQL\Connection;
@@ -10,7 +11,7 @@ use Lucinda\SQL\StatementException;
 class ConnectionTest
 {
     private $connection;
-    
+
     public function __construct()
     {
         $this->connection = new Connection();
@@ -27,7 +28,7 @@ class ConnectionTest
             return new Result(false);
         }
     }
-        
+
 
     public function transaction()
     {
@@ -37,32 +38,32 @@ class ConnectionTest
         $transaction->rollback();
         return new Result($this->connection->statement()->execute("SELECT first_name FROM users WHERE id=1")->toValue()=="John");
     }
-        
+
 
     public function statement()
     {
         $results = [];
-        
+
         $statement = $this->connection->statement();
-        
+
         try {
             $statement->execute("SELECT first_name FROM users WHERE iad=1");
             $results[] = new Result(false, "incorrect query");
         } catch (StatementException $e) {
             $results[] = new Result(true, "incorrect query");
         }
-        
+
         $results[] = new Result($statement->execute("SELECT first_name FROM users WHERE id=1")->toValue()=="John", "correct query");
-        
+
         return $results;
     }
-        
+
 
     public function preparedStatement()
     {
         $results = [];
-        
-        
+
+
         try {
             $statement = $this->connection->preparedStatement();
             $statement->prepare("SELECT first_name FROM users WHERE iad=:id");
@@ -71,11 +72,11 @@ class ConnectionTest
         } catch (StatementException $e) {
             $results[] = new Result(true, "incorrect query");
         }
-        
+
         $statement = $this->connection->preparedStatement();
         $statement->prepare("SELECT first_name FROM users WHERE id=:id");
         $results[] = new Result($statement->execute([":id"=>1])->toValue()=="John", "correct query");
-        
+
         return $results;
     }
 
@@ -85,14 +86,14 @@ class ConnectionTest
         $this->connection->keepAlive();
         return new Result(true);
     }
-        
+
 
     public function reconnect()
     {
         $this->connection->reconnect();
         return new Result(true);
     }
-        
+
 
     public function disconnect()
     {

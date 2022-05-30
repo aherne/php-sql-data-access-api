@@ -1,5 +1,8 @@
 <?php
+
 namespace Lucinda\SQL;
+
+use PDO;
 
 /**
  * Implements a database connection on top of PDO.
@@ -9,9 +12,9 @@ class Connection
     /**
      * Variable containing an instance of PDO class.
      *
-     * @var ?\PDO
+     * @var ?PDO
      */
-    protected ?\PDO $PDO = null;
+    protected ?PDO $pdo = null;
 
     /**
      * Variable containing an instance of DataSource class saved to be used in keep alive.
@@ -43,8 +46,13 @@ class Connection
             }
 
             // performs connection to PDO
-            $this->PDO = new \PDO($dataSource->getDriverName().$settings, $dataSource->getUserName(), $dataSource->getPassword(), $dataSource->getDriverOptions());
-            $this->PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $this->pdo = new PDO(
+                $dataSource->getDriverName().$settings,
+                $dataSource->getUserName(),
+                $dataSource->getPassword(),
+                $dataSource->getDriverOptions()
+            );
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (\PDOException $e) {
             $exception = new ConnectionException($e->getMessage(), $e->getCode());
             $exception->setHostName($dataSource->getHost());
@@ -63,7 +71,7 @@ class Connection
      */
     public function transaction(): Transaction
     {
-        return new Transaction($this->PDO);
+        return new Transaction($this->pdo);
     }
 
     /**
@@ -73,7 +81,7 @@ class Connection
      */
     public function statement(): Statement
     {
-        return new Statement($this->PDO);
+        return new Statement($this->pdo);
     }
 
 
@@ -84,22 +92,22 @@ class Connection
      */
     public function preparedStatement(): PreparedStatement
     {
-        return new PreparedStatement($this->PDO);
+        return new PreparedStatement($this->pdo);
     }
-    
+
     /**
      * Restores connection to database server in case it got closed unexpectedly.
      */
     public function keepAlive(): void
     {
-        $statement = new Statement($this->PDO);
+        $statement = new Statement($this->pdo);
         try {
             $statement->execute("SELECT 1");
         } catch (StatementException $e) {
             $this->connect($this->dataSource);
         }
     }
-    
+
     /**
      * Reconnects to database server.
      */
@@ -108,12 +116,12 @@ class Connection
         $this->disconnect();
         $this->connect($this->dataSource);
     }
-    
+
     /**
      * Closes connection to database server.
      */
     public function disconnect(): void
     {
-        $this->PDO = null;
+        $this->pdo = null;
     }
 }

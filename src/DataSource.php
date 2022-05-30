@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\SQL;
 
 /**
@@ -13,6 +14,9 @@ class DataSource
     private string $password;
     private string $schema;
     private string $charset;
+    /**
+     * @var array<int,int>
+     */
     private array $driverOptions=[];
 
     /**
@@ -23,29 +27,29 @@ class DataSource
      */
     public function __construct(\SimpleXMLElement $databaseInfo)
     {
-        $this->driverName = (string) $databaseInfo["driver"];
-        $this->host = (string) $databaseInfo["host"];
-        $this->port = (int) $databaseInfo["port"];
-        $this->userName = (string) $databaseInfo["username"];
-        $this->password = (string) $databaseInfo["password"];
-        $this->schema = (string) $databaseInfo["schema"];
-        $this->charset = (string) $databaseInfo["charset"];
+        $this->setDriverName($databaseInfo);
+        $this->setDriverOptions($databaseInfo);
+        $this->setHost($databaseInfo);
+        $this->setPort($databaseInfo);
+        $this->setUserName($databaseInfo);
+        $this->setPassword($databaseInfo);
+        $this->setSchema($databaseInfo);
+        $this->setCharset($databaseInfo);
 
-        if (!$this->driverName || !$this->host || !$this->userName || !$this->password)
-        {
+        if (!$this->driverName || !$this->host || !$this->userName || !$this->password) {
             throw new ConfigurationException("Attributes are mandatory: driver, host, port, username, password!");
         }
+    }
 
-        $this->driverOptions[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
-        if (isset($databaseInfo["autocommit"])) {
-            $this->driverOptions[\PDO::ATTR_AUTOCOMMIT] = ((string) $databaseInfo["autocommit"]?1:0);
-        }
-        if (isset($databaseInfo["persistent"])) {
-            $this->driverOptions[\PDO::ATTR_PERSISTENT] = ((string) $databaseInfo["persistent"]?1:0);
-        }
-        if (!empty($databaseInfo["timeout"])) {
-            $this->driverOptions[\PDO::ATTR_TIMEOUT] = (int) $databaseInfo["timeout"];
-        }
+    /**
+     * Sets database server vendor.
+     *
+     * @param \SimpleXMLElement $databaseInfo
+     * @return void
+     */
+    private function setDriverName(\SimpleXMLElement $databaseInfo): void
+    {
+        $this->driverName = (string) $databaseInfo["driver"];
     }
 
     /**
@@ -59,13 +63,44 @@ class DataSource
     }
 
     /**
+     * Sets database server vendor PDO connection options
+     *
+     * @param \SimpleXMLElement $databaseInfo
+     * @return void
+     */
+    private function setDriverOptions(\SimpleXMLElement $databaseInfo): void
+    {
+        $this->driverOptions[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
+        if (isset($databaseInfo["autocommit"])) {
+            $this->driverOptions[\PDO::ATTR_AUTOCOMMIT] = ((string) $databaseInfo["autocommit"] ? 1 : 0);
+        }
+        if (isset($databaseInfo["persistent"])) {
+            $this->driverOptions[\PDO::ATTR_PERSISTENT] = ((string) $databaseInfo["persistent"] ? 1 : 0);
+        }
+        if (!empty($databaseInfo["timeout"])) {
+            $this->driverOptions[\PDO::ATTR_TIMEOUT] = (int) $databaseInfo["timeout"];
+        }
+    }
+
+    /**
      * Gets database server vendor PDO connection options
      *
-     * @return array
+     * @return array<int,int>
      */
     public function getDriverOptions(): array
     {
         return $this->driverOptions;
+    }
+
+    /**
+     * Sets database server host name
+     *
+     * @param \SimpleXMLElement $databaseInfo
+     * @return void
+     */
+    private function setHost(\SimpleXMLElement $databaseInfo): void
+    {
+        $this->host = (string) $databaseInfo["host"];
     }
 
     /**
@@ -79,6 +114,17 @@ class DataSource
     }
 
     /**
+     * Sets database server port
+     *
+     * @param \SimpleXMLElement $databaseInfo
+     * @return void
+     */
+    private function setPort(\SimpleXMLElement $databaseInfo): void
+    {
+        $this->port = (int) $databaseInfo["port"];
+    }
+
+    /**
      * Gets database server port
      *
      * @return integer
@@ -86,6 +132,17 @@ class DataSource
     public function getPort(): int
     {
         return $this->port;
+    }
+
+    /**
+     * Sets database server user name
+     *
+     * @param \SimpleXMLElement $databaseInfo
+     * @return void
+     */
+    private function setUserName(\SimpleXMLElement $databaseInfo): void
+    {
+        $this->userName = (string) $databaseInfo["username"];
     }
 
     /**
@@ -99,6 +156,17 @@ class DataSource
     }
 
     /**
+     * Sets database server password
+     *
+     * @param \SimpleXMLElement $databaseInfo
+     * @return void
+     */
+    private function setPassword(\SimpleXMLElement $databaseInfo): void
+    {
+        $this->password = (string) $databaseInfo["password"];
+    }
+
+    /**
      * Gets database server user password
      *
      * @return string
@@ -109,6 +177,17 @@ class DataSource
     }
 
     /**
+     * Sets database server default schema
+     *
+     * @param \SimpleXMLElement $databaseInfo
+     * @return void
+     */
+    private function setSchema(\SimpleXMLElement $databaseInfo): void
+    {
+        $this->schema = (string) $databaseInfo["schema"];
+    }
+
+    /**
      * Gets database server default schema
      *
      * @return string
@@ -116,6 +195,17 @@ class DataSource
     public function getSchema(): string
     {
         return $this->schema;
+    }
+
+    /**
+     * Sets database server default charset
+     *
+     * @param \SimpleXMLElement $databaseInfo
+     * @return void
+     */
+    private function setCharset(\SimpleXMLElement $databaseInfo): void
+    {
+        $this->charset = (string) $databaseInfo["charset"];
     }
 
     /**

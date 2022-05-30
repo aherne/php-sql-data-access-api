@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\SQL;
 
 /**
@@ -11,32 +12,32 @@ class PreparedStatement
      *
      * @var \PDO PDO
      */
-    protected \PDO $PDO;
-    
+    protected \PDO $pdo;
+
     /**
      * Variable containing an instance of PDOStatement class.
      *
      * @var \PDOStatement PDO
      */
-    protected \PDOStatement $PDOStatement;
-    
+    protected \PDOStatement $pdoStatement;
+
     /**
      * Statement to be prepared.
      *
      * @var string $pendingStatement
      */
     protected string $pendingStatement;
-    
+
     /**
      * Creates a SQL prepared statement object automatically.
      *
-     * @param \PDO $PDO
+     * @param \PDO $pdo
      */
-    public function __construct(\PDO $PDO)
+    public function __construct(\PDO $pdo)
     {
-        $this->PDO = $PDO;
+        $this->pdo = $pdo;
     }
-    
+
     /**
      * Prepares a statement for execution.
      *
@@ -45,7 +46,7 @@ class PreparedStatement
     public function prepare(string $query): void
     {
         $this->pendingStatement=$query;
-        $this->PDOStatement = $this->PDO->prepare($query);
+        $this->pdoStatement = $this->pdo->prepare($query);
     }
 
     /**
@@ -61,13 +62,13 @@ class PreparedStatement
         if (!$this->pendingStatement) {
             throw new Exception("Cannot bind anything on a statement that hasn't been prepared!");
         }
-        $this->PDOStatement->bindValue($parameter, $value, $dataType);
+        $this->pdoStatement->bindValue($parameter, $value, $dataType);
     }
-    
+
     /**
      * Executes a prepared statement.
      *
-     * @param string[string] $boundParameters An array of values with as many elements as there are bound parameters in the SQL statement being executed.
+     * @param array<string,int|string|float|bool> $boundParameters An array of values with as many elements as there are bound parameters in the SQL statement being executed.
      * @return StatementResults
      * @throws Exception If developer tries to execute a query that wasn't prepared.
      * @throws StatementException If query execution fails.
@@ -79,15 +80,15 @@ class PreparedStatement
         }
         try {
             if (!empty($boundParameters)) {
-                $this->PDOStatement->execute($boundParameters);
+                $this->pdoStatement->execute($boundParameters);
             } else {
-                $this->PDOStatement->execute();
+                $this->pdoStatement->execute();
             }
         } catch (\PDOException $e) {
             $exception = new StatementException($e->getMessage(), (int) $e->getCode());
             $exception->setQuery($this->pendingStatement);
             throw $exception;
         }
-        return new StatementResults($this->PDO, $this->PDOStatement);
+        return new StatementResults($this->pdo, $this->pdoStatement);
     }
 }

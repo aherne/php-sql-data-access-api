@@ -1,4 +1,5 @@
 <?php
+
 namespace Lucinda\SQL;
 
 /**
@@ -9,23 +10,23 @@ class ConnectionFactory
     /**
      * Stores open connections.
      *
-     * @var array
+     * @var array<string,Connection>
      */
     private static array $instances = [];
-    
+
     /**
      * Stores registered data sources.
-     * @var array
+     * @var array<string,DataSource>
      */
     private static array $dataSources = [];
-    
+
     /**
      * @var Connection
      */
-    private Connection $database_connection;
-    
+    private Connection $databaseConnection;
+
     /**
-     * Registers a data source object encapsulatings connection info based on unique server identifier.
+     * Registers a data source object encapsulating connection info based on unique server identifier.
      *
      * @param string $serverName Unique identifier of server you will be connecting to.
      * @param DataSource $dataSource
@@ -34,13 +35,13 @@ class ConnectionFactory
     {
         self::$dataSources[$serverName] = $dataSource;
     }
-    
+
     /**
      * Opens connection to database server (if not already open) according to DataSource and
      * returns an object of that connection to delegate operations to.
      *
      * @param string $serverName Unique identifier of server you will be connecting to.
-     * @throws ConnectionException If connection to database server fails.
+     * @throws ConnectionException|Exception If connection to database server fails.
      * @return Connection
      */
     public static function getInstance(string $serverName): Connection
@@ -63,10 +64,10 @@ class ConnectionFactory
         if (!isset(self::$dataSources[$serverName])) {
             throw new Exception("Datasource not set for: ".$serverName);
         }
-        $this->database_connection = new Connection();
-        $this->database_connection->connect(self::$dataSources[$serverName]);
+        $this->databaseConnection = new Connection();
+        $this->databaseConnection->connect(self::$dataSources[$serverName]);
     }
-    
+
     /**
      * Internal utility to get connection.
      *
@@ -74,17 +75,17 @@ class ConnectionFactory
      */
     private function getConnection(): Connection
     {
-        return $this->database_connection;
+        return $this->databaseConnection;
     }
-    
+
     /**
      * Disconnects from database server automatically.
      */
     public function __destruct()
     {
         try {
-            if ($this->database_connection) {
-                $this->database_connection->disconnect();
+            if (!empty($this->databaseConnection)) {
+                $this->databaseConnection->disconnect();
             }
         } catch (\Exception $e) {
         }

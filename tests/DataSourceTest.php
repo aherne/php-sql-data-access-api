@@ -1,4 +1,5 @@
 <?php
+
 namespace Test\Lucinda\SQL;
 
 use Lucinda\SQL\DataSource;
@@ -7,12 +8,12 @@ use Lucinda\UnitTest\Result;
 class DataSourceTest
 {
     private $object;
-    
+
     public function __construct()
     {
         $this->object = new DataSource(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server);
     }
-        
+
 
     public function getDriverName()
     {
