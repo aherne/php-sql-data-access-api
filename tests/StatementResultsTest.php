@@ -69,9 +69,11 @@ class StatementResultsTest
     {
         $statement = $this->connection->preparedStatement();
         $statement->prepare("SELECT * FROM users WHERE last_name=:last_name");
-        return new Result($statement->execute([":last_name"=>"Doe"])->toList()==[
+        return new Result(
+            $statement->execute([":last_name"=>"Doe"])->toList()==[
             ["id"=>1, "first_name"=>"John", "last_name"=>"Doe"],
             ["id"=>2, "first_name"=>"Jane", "last_name"=>"Doe"]
-        ]);
+            ]
+        );
     }
 }
