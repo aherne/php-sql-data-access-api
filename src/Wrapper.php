@@ -11,8 +11,8 @@ class Wrapper
     /**
      * Binds SQL Data Access API to XML based on development environment and sets DataSource for later querying
      *
-     * @param \SimpleXMLElement $xml
-     * @param string $developmentEnvironment
+     * @param  \SimpleXMLElement $xml
+     * @param  string            $developmentEnvironment
      * @throws ConfigurationException If XML is improperly configured.
      */
     public function __construct(\SimpleXMLElement $xml, $developmentEnvironment)
@@ -33,7 +33,7 @@ class Wrapper
     /**
      * Gets data sources to inject
      *
-     * @param \SimpleXMLElement $xml
+     * @param  \SimpleXMLElement $xml
      * @return array<string,DataSource>
      * @throws ConfigurationException
      */

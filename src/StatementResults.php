@@ -24,7 +24,7 @@ class StatementResults
     /**
      * Creates an object of statement results.
      *
-     * @param \PDO $pdo
+     * @param \PDO          $pdo
      * @param \PDOStatement $pdoStatement
      */
     public function __construct(\PDO $pdo, \PDOStatement $pdoStatement)
@@ -87,8 +87,8 @@ class StatementResults
      * Fetches all rows from Resultset into a mapping that has row value of $columnKeyName as key and row value of
      * $columnValueName as value.
      *
-     * @param string $columnKeyName
-     * @param string $columnValueName
+     * @param  string $columnKeyName
+     * @param  string $columnValueName
      * @return array<mixed>
      */
     public function toMap(string $columnKeyName, string $columnValueName): array

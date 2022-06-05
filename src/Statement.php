@@ -27,7 +27,7 @@ class Statement
     /**
      * Quotes a string for use in a query.
      *
-     * @param string $value
+     * @param  string $value
      * @return string
      */
     public function quote($value): string
@@ -38,7 +38,7 @@ class Statement
     /**
      * Executes a query.
      *
-     * @param string $query
+     * @param  string $query
      * @throws StatementException If query execution fails
      * @return StatementResults
      */

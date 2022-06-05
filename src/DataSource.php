@@ -4,7 +4,7 @@ namespace Lucinda\SQL;
 
 /**
  * Encapsulates connection information to an SQL server
-*/
+ */
 class DataSource
 {
     private string $driverName;
@@ -22,7 +22,7 @@ class DataSource
     /**
      * Detects data source information.
      *
-     * @param \SimpleXMLElement $databaseInfo
+     * @param  \SimpleXMLElement $databaseInfo
      * @throws ConfigurationException
      */
     public function __construct(\SimpleXMLElement $databaseInfo)
@@ -44,7 +44,7 @@ class DataSource
     /**
      * Sets database server vendor.
      *
-     * @param \SimpleXMLElement $databaseInfo
+     * @param  \SimpleXMLElement $databaseInfo
      * @return void
      */
     private function setDriverName(\SimpleXMLElement $databaseInfo): void
@@ -65,7 +65,7 @@ class DataSource
     /**
      * Sets database server vendor PDO connection options
      *
-     * @param \SimpleXMLElement $databaseInfo
+     * @param  \SimpleXMLElement $databaseInfo
      * @return void
      */
     private function setDriverOptions(\SimpleXMLElement $databaseInfo): void
@@ -95,7 +95,7 @@ class DataSource
     /**
      * Sets database server host name
      *
-     * @param \SimpleXMLElement $databaseInfo
+     * @param  \SimpleXMLElement $databaseInfo
      * @return void
      */
     private function setHost(\SimpleXMLElement $databaseInfo): void
@@ -116,7 +116,7 @@ class DataSource
     /**
      * Sets database server port
      *
-     * @param \SimpleXMLElement $databaseInfo
+     * @param  \SimpleXMLElement $databaseInfo
      * @return void
      */
     private function setPort(\SimpleXMLElement $databaseInfo): void
@@ -137,7 +137,7 @@ class DataSource
     /**
      * Sets database server user name
      *
-     * @param \SimpleXMLElement $databaseInfo
+     * @param  \SimpleXMLElement $databaseInfo
      * @return void
      */
     private function setUserName(\SimpleXMLElement $databaseInfo): void
@@ -158,7 +158,7 @@ class DataSource
     /**
      * Sets database server password
      *
-     * @param \SimpleXMLElement $databaseInfo
+     * @param  \SimpleXMLElement $databaseInfo
      * @return void
      */
     private function setPassword(\SimpleXMLElement $databaseInfo): void
@@ -179,7 +179,7 @@ class DataSource
     /**
      * Sets database server default schema
      *
-     * @param \SimpleXMLElement $databaseInfo
+     * @param  \SimpleXMLElement $databaseInfo
      * @return void
      */
     private function setSchema(\SimpleXMLElement $databaseInfo): void
@@ -200,7 +200,7 @@ class DataSource
     /**
      * Sets database server default charset
      *
-     * @param \SimpleXMLElement $databaseInfo
+     * @param  \SimpleXMLElement $databaseInfo
      * @return void
      */
     private function setCharset(\SimpleXMLElement $databaseInfo): void

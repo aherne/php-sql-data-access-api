@@ -6,7 +6,7 @@ use PDO;
 
 /**
  * Implements a database connection on top of PDO.
-*/
+ */
 class Connection
 {
     /**
@@ -26,7 +26,7 @@ class Connection
     /**
      * Opens connection to database server.
      *
-     * @param DataSource $dataSource
+     * @param  DataSource $dataSource
      * @throws ConnectionException If connection to SQL server fails
      */
     public function connect(DataSource $dataSource): void

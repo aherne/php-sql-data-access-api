@@ -52,9 +52,9 @@ class PreparedStatement
     /**
      * Binds a value to a prepared statement.
      *
-     * @param string $parameter
-     * @param string|int $value
-     * @param integer $dataType
+     * @param  string     $parameter
+     * @param  string|int $value
+     * @param  integer    $dataType
      * @throws Exception If developer tries to bind a parameter to a query that wasn't prepared.
      */
     public function bind(string $parameter, string|int $value, int $dataType=\PDO::PARAM_STR): void
@@ -68,7 +68,7 @@ class PreparedStatement
     /**
      * Executes a prepared statement.
      *
-     * @param array<string,int|string|float|bool> $boundParameters An array of values with as many elements as there are bound parameters in the SQL statement being executed.
+     * @param  array<string,int|string|float|bool> $boundParameters An array of values with as many elements as there are bound parameters in the SQL statement being executed.
      * @return StatementResults
      * @throws Exception If developer tries to execute a query that wasn't prepared.
      * @throws StatementException If query execution fails.
