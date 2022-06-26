@@ -4,7 +4,7 @@ namespace Test\Lucinda\SQL;
 use Lucinda\SQL\Wrapper;
 use Lucinda\SQL\ConfigurationException;
 use Lucinda\UnitTest\Result;
-use Lucinda\SQL\ConnectionSingleton;
+use Lucinda\SQL\ConnectionFactory;
 
 class WrapperTest
 {
@@ -18,7 +18,7 @@ class WrapperTest
             $results[] = new Result(false, "tested wrapping");
         }
         
-        $connection = ConnectionSingleton::getInstance();
+        $connection = ConnectionFactory::getInstance("");
         $results[] = new Result(($connection->statement()->execute("SELECT first_name FROM users WHERE id=1")->toValue()=="John"), "tested binding");
         return $results;
     }

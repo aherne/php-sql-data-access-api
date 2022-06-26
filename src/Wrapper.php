@@ -30,7 +30,7 @@ class Wrapper
                     ConnectionFactory::setDataSource((string) $element["name"], new DataSource($element));
                 }
             } else {
-                ConnectionSingleton::setDataSource(new DataSource($xml["server"]));
+                ConnectionFactory::setDataSource("", new DataSource($xml["server"]));
             }
         }
     }
