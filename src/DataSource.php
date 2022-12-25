@@ -70,7 +70,6 @@ class DataSource
      */
     private function setDriverOptions(\SimpleXMLElement $databaseInfo): void
     {
-        $this->driverOptions[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
         if (isset($databaseInfo["autocommit"])) {
             $this->driverOptions[\PDO::ATTR_AUTOCOMMIT] = ((string) $databaseInfo["autocommit"] ? 1 : 0);
         }

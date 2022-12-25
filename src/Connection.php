@@ -52,7 +52,6 @@ class Connection
                 $dataSource->getPassword(),
                 $dataSource->getDriverOptions()
             );
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (\PDOException $e) {
             $exception = new ConnectionException($e->getMessage(), $e->getCode());
             $exception->setHostName($dataSource->getHost());
