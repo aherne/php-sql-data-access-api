@@ -88,7 +88,7 @@ class ConnectionFactory
             if (!empty($this->databaseConnection)) {
                 $this->databaseConnection->disconnect();
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 }

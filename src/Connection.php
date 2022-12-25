@@ -102,7 +102,7 @@ class Connection
         $statement = new Statement($this->pdo);
         try {
             $statement->execute("SELECT 1");
-        } catch (StatementException $e) {
+        } catch (StatementException) {
             $this->connect($this->dataSource);
         }
     }
