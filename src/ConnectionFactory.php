@@ -5,7 +5,7 @@ namespace Lucinda\SQL;
 /**
  * Implements a singleton factory for multiple SQL servers connection.
  */
-class ConnectionFactory
+final class ConnectionFactory
 {
     /**
      * Stores open connections.
