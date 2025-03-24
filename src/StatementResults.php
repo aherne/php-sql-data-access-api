@@ -66,7 +66,7 @@ class StatementResults
     /**
      * Fetches row from ResultSet.
      *
-     * @return string[string]|false
+     * @return array<string,mixed>|false
      */
     public function toRow()
     {
