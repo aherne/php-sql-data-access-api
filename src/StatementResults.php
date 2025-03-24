@@ -65,17 +65,18 @@ class StatementResults
     /**
      * Fetches row from ResultSet.
      *
-     * @return string[string]|false
+     * @return array
      */
-    public function toRow()
+    public function toRow(): array
     {
-        return $this->PDOStatement->fetch(\PDO::FETCH_ASSOC);
+       $result = $this->PDOStatement->fetch(\PDO::FETCH_ASSOC);
+       return $result?:[];
     }
     
     /**
      * Fetches first column of all rows from ResultSet.
      *
-     * @return string[]
+     * @return array
      */
     public function toColumn(): array
     {
