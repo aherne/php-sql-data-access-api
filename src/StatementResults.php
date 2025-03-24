@@ -66,11 +66,12 @@ class StatementResults
     /**
      * Fetches row from ResultSet.
      *
-     * @return array<string,mixed>|false
+     * @return array<string,mixed>
      */
-    public function toRow()
+    public function toRow(): array
     {
-        return $this->pdoStatement->fetch(\PDO::FETCH_ASSOC);
+        $result = $this->pdoStatement->fetch(\PDO::FETCH_ASSOC);
+        return ($result?:[]);
     }
 
     /**
