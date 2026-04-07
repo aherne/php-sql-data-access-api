@@ -1,4 +1,4 @@
-CREATE USER unit_test@localhost identified by 'test';
+CREATE USER 'unit_test'@'localhost' IDENTIFIED BY 'T3st_Password!';
 
 CREATE DATABASE unit_tests;
 

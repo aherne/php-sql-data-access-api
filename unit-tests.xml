@@ -9,7 +9,7 @@
   </unit_tests>
   <sql>
       <local>
-         <server driver="mysql" host="127.0.0.1" port="3306" username="unit_test" password="test" schema="unit_tests" charset="UTF8"/>
+         <server driver="mysql" host="127.0.0.1" port="3306" username="unit_test" password="T3st_Password!" schema="unit_tests" charset="UTF8"/>
       </local>
   </sql>
 </xml>

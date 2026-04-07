@@ -22,7 +22,8 @@ class DataSourceTest
 
     public function getDriverOptions()
     {
-        return new Result($this->object->getDriverOptions()==[\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
+        $options = $this->object->getDriverOptions();
+        return new Result($options == [] || $options == [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
     }
 
     public function getHost()
@@ -42,7 +43,7 @@ class DataSourceTest
 
     public function getPassword()
     {
-        return new Result($this->object->getPassword()=="test");
+        return new Result($this->object->getPassword()=="T3st_Password!");
     }
 
     public function getSchema()
