@@ -14,6 +14,7 @@ class DataSource
     private string $password;
     private string $schema;
     private string $charset;
+    private string $file;
     /**
      * @var array<int,int>
      */
@@ -35,9 +36,10 @@ class DataSource
         $this->setPassword($databaseInfo);
         $this->setSchema($databaseInfo);
         $this->setCharset($databaseInfo);
+        $this->setFile($databaseInfo);
 
-        if (!$this->driverName || !$this->host || !$this->userName || !$this->password) {
-            throw new ConfigurationException("Attributes are mandatory: driver, host, port, username, password!");
+        if (!$this->driverName || !$this->host || !$this->userName) {
+            throw new ConfigurationException("Attributes are mandatory: driver, host, username!");
         }
     }
 
@@ -70,6 +72,7 @@ class DataSource
      */
     private function setDriverOptions(\SimpleXMLElement $databaseInfo): void
     {
+        $this->driverOptions[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
         if (isset($databaseInfo["autocommit"])) {
             $this->driverOptions[\PDO::ATTR_AUTOCOMMIT] = ((string) $databaseInfo["autocommit"] ? 1 : 0);
         }
@@ -215,5 +218,26 @@ class DataSource
     public function getCharset(): string
     {
         return $this->charset;
+    }
+
+    /**
+     * Sets SQLLite file where DB is stored
+     *
+     * @param  \SimpleXMLElement $databaseInfo
+     * @return void
+     */
+    private function setFile(\SimpleXMLElement $databaseInfo): void
+    {
+        $this->file = (string) $databaseInfo["file"];
+    }
+
+    /**
+     * Gets SQLLite file where DB is store
+     *
+     * @return string
+     */
+    public function getFile(): string
+    {
+        return $this->file;
     }
 }

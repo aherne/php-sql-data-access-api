@@ -10,301 +10,350 @@ Table of contents:
 - [Examples](#examples)
 - [Reference Guide](#reference-guide)
 
-## About 
+## About
 
-This API is a ultra light weight [Data Access Layer](https://en.wikipedia.org/wiki/Data_access_layer) built on top of [PDO](https://www.php.net/manual/en/book.pdo.php) and inspired by [JDBC](https://en.wikipedia.org/wiki/Java_Database_Connectivity) in terms of architecture. As a data access layer, its purpose is to 
-to shield complexity of working with different SQL vendors and provide a simple and elegant interface for connecting, querying and parsing query results that overcomes PDO design flaws (such as chaotic architecture and functionality).
+This API is an ultra lightweight [Data Access Layer](https://en.wikipedia.org/wiki/Data_access_layer) built on top of [PDO](https://www.php.net/manual/en/book.pdo.php) and inspired by [JDBC](https://en.wikipedia.org/wiki/Java_Database_Connectivity). Its goal is to shield applications from PDO's uneven low-level API and offer a small, predictable interface for:
+
+- configuring SQL data sources
+- opening and reusing connections
+- executing regular and prepared statements
+- handling transactions
+- reading statement results through common result shapes
 
 ![diagram](https://www.lucinda-framework.com/sql-data-access-api.svg)
 
-The whole idea of working with SQL databases (vendors) is reduced to following steps:
-
-- **[configuration](#configuration)**: setting up an XML file where SQL vendors used by your site are configured per development environment
-- **[execution](#execution)**: using [Lucinda\SQL\Wrapper](https://github.com/aherne/php-sql-data-access-api/blob/master/src/Wrapper.php) to read above XML based on development environment, compile [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/master/src/DataSource.php) object(s) storing connection information and inject them statically into
-[Lucinda\SQL\ConnectionFactory](#class-connectionfactory) classes to use in querying
-
-API is fully PSR-4 compliant, only requiring PHP8.1+ interpreter, SimpleXML and PDO extensions. To quickly see how it works, check:
-
-- **[installation](#installation)**: describes how to install API on your computer, in light of steps above
-- **[unit tests](#unit-tests)**: API has 100% Unit Test coverage, using [UnitTest API](https://github.com/aherne/unit-testing) instead of PHPUnit for greater flexibility
-- **[examples](#examples)**: shows a number of examples in how to implement CRUD queries using this API
+The API is fully PSR-4 compliant and requires PHP 8.1+, SimpleXML, and PDO.
 
 ## Configuration
 
-To configure this API you must have a XML with a **sql** tag inside:
-
-```xml
-<sql>
-	<{ENVIRONMENT}>
-		<server name="..." driver="..." host="..." port="..." username="..." password="..." schema="..." charset="..."/>
-		...
-	</{ENVIRONMENT}>
-	...
-</sql>
-```
-
-Where:
-
-- **sql**: holds global connection information for SQL servers used
-    - {ENVIRONMENT}: name of development environment (to be replaced with "local", "dev", "live", etc)
-        - **server**: stores connection information about a single server via attributes:
-            - *name*: (optional) unique identifier. Required if multiple sql servers are used for same environment!
-            - *driver*: (mandatory) PDO driver name (pdo drivers)
-            - *host*: (mandatory) server host name.
-            - *port*: (optional) server port. If not set, default server port is used.
-            - *username*: (mandatory) user name to use in connection.
-            - *password*: (mandatory) password to use in connection.
-            - *schema*: (optional) default schema to use after connecting.
-            - *charset*: (optional) default charset to use in queries after connecting.
-            - *autocommit*: (not recommended) whether or not INSERT/UPDATE operations should be auto-committed (value can be: 0 or 1). Not supported by all vendors!
-            - *persistent*: (not recommended) whether or not connections should be persisted across sections (value can be: 0 or 1). Not supported by all vendors!
-            - *timeout*: (not recommended) time in seconds by which idle connection is automatically closed. Not supported by all vendors!
-
-Example:
+Configuration is XML based. A **sql** tag contains one child tag per development environment:
 
 ```xml
 <sql>
     <local>
-        <server driver="mysql" host="localhost" port="3306" username="root" password="" schema="example" charset="utf8"/>
+        <server name="main" driver="mysql" host="localhost" port="3306" username="root" password="" schema="example" charset="utf8"/>
     </local>
     <live>
-        <server driver="mysql" host="localhost" port="3306" username="hello" password="world" schema="example" charset="utf8"/>
+        <server name="main" driver="mysql" host="localhost" port="3306" username="hello" password="world" schema="example" charset="utf8"/>
     </live>
 </sql>
 ```
 
-## Execution
+Attributes supported by **server**:
 
-Once you have completed step above, you need to run this in order to be able to connect and query database(s) later on:
+| Attribute | Required | Description |
+| --- | --- | --- |
+| name | Only when multiple servers exist in the same environment | Unique identifier used by `ConnectionFactory::getInstance`. If omitted for a single server, use `""` as server name. |
+| driver | Yes | PDO driver name, such as `mysql`, `pgsql`, or `sqlite`. |
+| host | Yes | Database server host name. |
+| port | No | Database server port. If omitted, the PDO driver default is used. |
+| username | Yes | User name used by PDO when opening the connection. |
+| password | No | Password used by PDO. Empty passwords are accepted. |
+| schema | No | Database name sent as `dbname` in the generated PDO DSN. |
+| charset | No | Charset sent in the generated PDO DSN. |
+| file | Required for `sqlite` | SQLite database file path, or `:memory:` for an in-memory database. |
+| autocommit | No | Maps to `PDO::ATTR_AUTOCOMMIT`. Value should be `0` or `1`. Not supported by all drivers. |
+| persistent | No | Maps to `PDO::ATTR_PERSISTENT`. Value should be `0` or `1`. Not supported by all drivers. |
+| timeout | No | Maps to `PDO::ATTR_TIMEOUT`. Not supported by all drivers. |
 
-```php
-new Lucinda\SQL\Wrapper(simplexml_load_file(XML_FILE_NAME), DEVELOPMENT_ENVIRONMENT);
+`PDO::ATTR_ERRMODE` is always set to `PDO::ERRMODE_EXCEPTION` by default, so SQL and connection errors can be translated into this API's exceptions.
+
+### DSN Notes
+
+For MySQL and PostgreSQL, the API builds a PDO DSN from `driver`, `host`, `port`, `schema`, and `charset`.
+
+Examples:
+
+```text
+mysql:host=localhost;port=3306;dbname=example;charset=utf8
+pgsql:host=localhost;port=5432;dbname=example
 ```
 
-This will wrap each **server** tag found for current development environment into [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/master/src/DataSource.php) objects and inject them statically into [Lucinda\SQL\ConnectionFactory](#class-connectionfactory) class. 
+For SQLite, provide `driver="sqlite"` and `file="..."`:
 
-Class above insures a single [Lucinda\SQL\Connection](#class-connection) is reused per server throughout session (input-output request flow) duration. To use that connection in querying, following methods are available:
+```xml
+<server driver="sqlite" host="localhost" username="sqlite" password="" file=":memory:"/>
+```
 
-- **statement**: returns a [Lucinda\SQL\Statement](#class-statement) object to use in creation and execution of a sql statement
-- **preparedStatement**: returns a [Lucinda\SQL\PreparedStatement](#class-preparedstatement) object to use in creation and execution of a sql prepared statement
-- **transaction**: returns a [Lucinda\SQL\Transaction](#class-transaction) object to use in wrapping operations with above two in transactions
+## Execution
 
-Once an SQL statement was executed via *execute* methods above, users are able to process results based on [Lucinda\SQL\StatementResults](#class-statementresults) object returned.
+Once configuration is ready, bootstrap the wrapper:
+
+```php
+require __DIR__."/vendor/autoload.php";
+
+new Lucinda\SQL\Wrapper(simplexml_load_file("configuration.xml"), "local");
+```
+
+This reads the current environment's **server** tags, converts them into `Lucinda\SQL\DataSource` objects, and registers them into `Lucinda\SQL\ConnectionFactory`.
+
+Then retrieve a connection:
+
+```php
+$connection = Lucinda\SQL\ConnectionFactory::getInstance("main");
+```
+
+If your environment has one unnamed server:
+
+```php
+$connection = Lucinda\SQL\ConnectionFactory::getInstance("");
+```
+
+Available operations on a connection:
+
+- `statement()` creates a `Lucinda\SQL\Statement`.
+- `preparedStatement()` creates a `Lucinda\SQL\PreparedStatement`.
+- `transaction()` creates a `Lucinda\SQL\Transaction`.
+- `keepAlive()` checks the current connection with `SELECT 1`.
+- `reconnect()` closes and opens the connection again using the stored datasource.
+- `disconnect()` closes the PDO connection.
+
+Calling `statement()`, `preparedStatement()`, or `transaction()` after `disconnect()` throws `Lucinda\SQL\ConnectionException`.
 
 ## Installation
 
-First choose a folder where API will be installed then write this command there using console:
+Install through Composer:
 
 ```console
 composer require lucinda/sql-data-access
 ```
 
-Then create a *configuration.xml* file holding configuration settings (see [configuration](#configuration) above) and a *index.php* file (see [initialization](#initialization) above) in project root with following code:
+Create a configuration file and bootstrap it:
 
 ```php
-require(__DIR__."/vendor/autoload.php");
+require __DIR__."/vendor/autoload.php";
+
 new Lucinda\SQL\Wrapper(simplexml_load_file("configuration.xml"), "local");
-```
 
-Then you are able to query server, as in below example:
-
-```php
 $connection = Lucinda\SQL\ConnectionFactory::getInstance("");
-$users = $connection->statement("SELECT id, name FROM users")->toMap("id", "name");
+$users = $connection->statement()
+    ->execute("SELECT id, first_name FROM users")
+    ->toMap("id", "first_name");
 ```
 
 ## Unit Tests
 
-For tests and examples, check following files/folders in API sources:
+This package uses [lucinda/unit-testing](https://github.com/aherne/unit-testing).
 
-- [unit-tests.sql](https://github.com/aherne/php-sql-data-access-api/blob/master/unit-tests.xml): SQL commands you need to run ONCE on server (assuming MySQL) before unit tests execution
-- [test.php](https://github.com/aherne/php-sql-data-access-api/blob/master/test.php): runs unit tests in console
-- [unit-tests.xml](https://github.com/aherne/php-sql-data-access-api/blob/master/unit-tests.xml): sets up unit tests and mocks "sql" tag
-- [tests](https://github.com/aherne/php-sql-data-access-api/tree/v3.0.0/tests): unit tests for classes from [src](https://github.com/aherne/php-sql-data-access-api/tree/v3.0.0/src) folder
+Relevant files:
 
-If you desire to run [test.php](https://github.com/aherne/php-sql-data-access-api/blob/master/test.php) yourselves, import [unit-tests.sql](https://github.com/aherne/php-sql-data-access-api/blob/master/unit-tests.xml) file first!
+- [unit-tests.sql](https://github.com/aherne/php-sql-data-access-api/blob/master/unit-tests.sql): SQL setup required before running the tests.
+- [unit-tests.xml](https://github.com/aherne/php-sql-data-access-api/blob/master/unit-tests.xml): test runner and SQL test datasource configuration.
+- [test.php](https://github.com/aherne/php-sql-data-access-api/blob/master/test.php): console test runner.
+- [tests](https://github.com/aherne/php-sql-data-access-api/tree/master/tests): unit tests for classes in `src`.
+- `TESTING_GUIDELINES.md`: local conventions for writing tests with `Lucinda\UnitTest\Validator`.
+
+Run tests:
+
+```console
+php test.php
+```
+
+Before running the suite locally, import `unit-tests.sql` into your SQL server and make sure credentials in `unit-tests.xml` match your local setup.
 
 ## Examples
 
 ### INSERT
 
-Example of processing results of an INSERT query:
-
 ```php
 $connection = Lucinda\SQL\ConnectionFactory::getInstance("");
-$resultSet = $connection->statement("INSERT INTO users (first_name, last_name) VALUES ('John', 'Doe')");
+$resultSet = $connection->statement()
+    ->execute("INSERT INTO users (first_name, last_name) VALUES ('John', 'Doe')");
+
 $lastInsertID = $resultSet->getInsertId();
 ```
 
 ### UPDATE/DELETE
 
-Example of processing results of an UPDATE/DELETE query:
-
 ```php
 $connection = Lucinda\SQL\ConnectionFactory::getInstance("");
-$resultSet = $connection->statement("UPDATE users SET first_name='Jane' WHERE id=1");
-if($resultSet->getAffectedRows()>0) {
+$resultSet = $connection->statement()
+    ->execute("UPDATE users SET first_name='Jane' WHERE id=1");
+
+if ($resultSet->getAffectedRows() > 0) {
     // update occurred
 }
 ```
 
 ### SELECT
 
-Example of getting a single value from SELECT resultset:
+Single value:
 
 ```php
 $connection = Lucinda\SQL\ConnectionFactory::getInstance("");
-$firstName = $connection->statement("SELECT first_name FROM users WHERE id=1")->toValue();
+$firstName = $connection->statement()
+    ->execute("SELECT first_name FROM users WHERE id=1")
+    ->toValue();
 ```
 
-Example of parsing SELECT resultset row by row:
+Rows one by one:
 
 ```php
 $connection = Lucinda\SQL\ConnectionFactory::getInstance("");
-$resultSet = $connection->statement("SELECT * FROM users");
+$resultSet = $connection->statement()->execute("SELECT * FROM users");
+
 while ($row = $resultSet->toRow()) {
     // process row
 }
 ```
 
-Example of getting all values of first column from SELECT resultset:
+First column:
 
 ```php
 $connection = Lucinda\SQL\ConnectionFactory::getInstance("");
-$ids = $connection->statement("SELECT id FROM users")->toColumn();
+$ids = $connection->statement()
+    ->execute("SELECT id FROM users")
+    ->toColumn();
 ```
 
-Example of getting all rows from SELECT resultset as array where value of first becomes key and value of second becomes value:
+Map:
 
 ```php
 $connection = Lucinda\SQL\ConnectionFactory::getInstance("");
-$users = $connection->statement("SELECT id, name FROM users")->toMap("id", "name");
-// above is an array where id of user becomes key and name becomes value
+$users = $connection->statement()
+    ->execute("SELECT id, first_name FROM users")
+    ->toMap("id", "first_name");
 ```
 
-Example of getting all values from SELECT resultset:
+List:
 
 ```php
 $connection = Lucinda\SQL\ConnectionFactory::getInstance("");
-$users = $connection->statement("SELECT * FROM users")->toList();
-// above is an array containing all rows, each as column-value associative array
+$users = $connection->statement()
+    ->execute("SELECT * FROM users")
+    ->toList();
+```
+
+### Prepared Statement
+
+```php
+$connection = Lucinda\SQL\ConnectionFactory::getInstance("");
+$preparedStatement = $connection->preparedStatement();
+$preparedStatement->prepare("SELECT id FROM users WHERE first_name=:first_name");
+$preparedStatement->bind(":first_name", "John");
+
+$id = $preparedStatement->execute()->toValue();
+```
+
+Or pass bound parameters directly to `execute`:
+
+```php
+$connection = Lucinda\SQL\ConnectionFactory::getInstance("");
+$preparedStatement = $connection->preparedStatement();
+$preparedStatement->prepare("SELECT id FROM users WHERE first_name=:first_name");
+
+$id = $preparedStatement->execute([":first_name"=>"John"])->toValue();
+```
+
+### Transaction
+
+```php
+$connection = Lucinda\SQL\ConnectionFactory::getInstance("");
+$transaction = $connection->transaction();
+
+$transaction->begin();
+
+try {
+    $connection->statement()->execute("UPDATE users SET first_name='John' WHERE id=1");
+    $transaction->commit();
+} catch (Throwable $e) {
+    if ($transaction->isActive()) {
+        $transaction->rollback();
+    }
+    throw $e;
+}
 ```
 
 ## Reference Guide
 
 ### Class Connection
 
-[Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/master/src/Connection.php) can be used to execute operations on a connection.
-
-Following methods are relevant to connection management (HANDLED BY API AUTOMATICALLY, so **to be used only in niche situations**):
+`Lucinda\SQL\Connection` represents a PDO-backed database connection.
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
-| connect | [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/master/src/DataSource.php) | void | Connects to database server based on data source. Throws [Lucinda\SQL\ConnectionException](https://github.com/aherne/php-sql-data-access-api/blob/master/src/ConnectionException.php) if connection fails! |
-| disconnect | void | void | Closes connection to database server. |
-| reconnect | void | void | Closes then opens connection to database server based on stored data source. Throws [Lucinda\SQL\ConnectionException](https://github.com/aherne/php-sql-data-access-api/blob/master/src/ConnectionException.php) if connection fails! |
-| keepAlive | void | void | Restores connection to database server in case it got closed unexpectedly. Throws [Lucinda\SQL\ConnectionException](https://github.com/aherne/php-sql-data-access-api/blob/master/src/ConnectionException.php) if connection fails! |
-
-Following methods are relevant for querying:
-
-| Method | Arguments | Returns | Description |
-| --- | --- | --- | --- |
-| statement | void | [Lucinda\SQL\Statement](https://github.com/aherne/php-sql-data-access-api/blob/master/src/Statement.php) | Creates a statement to use in querying. |
-| preparedStatement | void | [Lucinda\SQL\PreparedStatement](https://github.com/aherne/php-sql-data-access-api/blob/master/src/PreparedStatement.php) | Creates a prepared statement to use in querying. |
-| transaction | void | [Lucinda\SQL\Transaction](https://github.com/aherne/php-sql-data-access-api/blob/master/src/Transaction.php) | Creates a transaction wrap above operations with. |
+| connect | `Lucinda\SQL\DataSource $dataSource` | void | Opens a PDO connection. Throws `Lucinda\SQL\ConnectionException` if connection fails. |
+| disconnect | void | void | Closes the PDO connection. |
+| reconnect | void | void | Closes then opens the connection again using the stored datasource. |
+| keepAlive | void | void | Runs `SELECT 1`; if the statement fails, reconnects using the stored datasource. |
+| statement | void | `Lucinda\SQL\Statement` | Creates a regular SQL statement helper. |
+| preparedStatement | void | `Lucinda\SQL\PreparedStatement` | Creates a prepared statement helper. |
+| transaction | void | `Lucinda\SQL\Transaction` | Creates a transaction helper. |
 
 ### Class ConnectionFactory
 
-[Lucinda\SQL\ConnectionFactory](https://github.com/aherne/php-sql-data-access-api/blob/master/src/ConnectionFactory.php) class insures single [Lucinda\SQL\Connection](#class-connection) per session and server name. Has following static methods:
+`Lucinda\SQL\ConnectionFactory` stores datasources and reuses one connection per server name.
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
-| static setDataSource | string $serverName, [Lucinda\SQL\DataSource](https://github.com/aherne/php-sql-data-access-api/blob/master/src/DataSource.php) | void | Sets data source detected beforehand per value of *name* attribute @ **server** tag. Done automatically by API! |
-| static getInstance | string $serverName | [Lucinda\SQL\Connection](https://github.com/aherne/php-sql-data-access-api/blob/master/src/Connection.php) | Connects to server based on above data source ONCE and returns connection for later querying. Throws [Lucinda\SQL\ConnectionException](https://github.com/aherne/php-sql-data-access-api/blob/master/src/ConnectionException.php) if connection fails! |
+| static setDataSource | `string $serverName, Lucinda\SQL\DataSource $dataSource` | void | Registers a datasource. Normally called by `Wrapper`. |
+| static getInstance | `string $serverName` | `Lucinda\SQL\Connection` | Returns the existing connection or opens it once. |
 
-^ if your application uses a single database server per environment and *name* attribute @ server XML tag isn't set, empty string must be used as server name!
+### Class DataSource
 
-Usage example:
+`Lucinda\SQL\DataSource` reads one XML **server** tag and exposes connection details.
 
-```php
-$connection = Lucinda\SQL\ConnectionFactory::getInstance("myServer");
-$conection->statement()->execute("UPDATE users SET name='John' WHERE name='Jane'");
-```
-
-Please note this class closes all open connections automatically on destruction!
+| Method | Returns |
+| --- | --- |
+| getDriverName | string |
+| getDriverOptions | array |
+| getHost | string |
+| getPort | int |
+| getUserName | string |
+| getPassword | string |
+| getSchema | string |
+| getCharset | string |
+| getFile | string |
 
 ### Class Statement
 
-[Lucinda\SQL\Statement](https://github.com/aherne/php-sql-data-access-api/blob/master/src/Statement.php) implements normal SQL unprepared statement operations and comes with following public methods:
-
+`Lucinda\SQL\Statement` executes regular SQL statements.
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
-| quote | mixed $value | void | Escapes and quotes value against SQL injection. |
-| execute | string $query | [Lucinda\SQL\StatementResults](https://github.com/aherne/php-sql-data-access-api/blob/master/src/StatementResults.php) | Executes query and returns results. Throws [Lucinda\SQL\StatementException](https://github.com/aherne/php-sql-data-access-api/blob/master/src/StatementException.php) if execution fails! |
-
-Usage example:
-
-```php
-$connection = Lucinda\SQL\ConnectionFactory::getInstance("");
-$statement = $connection->statement();
-$resultSet = $statement->execute("SELECT id FROM users WHERE name='".$statement->quote($name)."'");
-```
-
-Please note this class closes all open connections automatically on destruction!
+| quote | `string $value` | string | Quotes a value using PDO. |
+| execute | `string $query` | `Lucinda\SQL\StatementResults` | Executes a query. Throws `Lucinda\SQL\StatementException` if execution fails. |
 
 ### Class PreparedStatement
 
-[Lucinda\SQL\PreparedStatement](https://github.com/aherne/php-sql-data-access-api/blob/master/src/PreparedStatement.php) implements SQL prepared statement operations and comes with following public methods:
+`Lucinda\SQL\PreparedStatement` wraps PDO prepared statements.
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
-| prepare | string $query | void |  Prepares query for execution. |
-| bind | string $parameter, mixed $value, int $dataType=\PDO::PARAM_STR | void | Binds parameter to prepared query. |
-| execute | array $boundParameters = array()  | [Lucinda\SQL\StatementResults](https://github.com/aherne/php-sql-data-access-api/blob/master/src/StatementResults.php) | Executes query and returns results. Throws [Lucinda\SQL\StatementException](https://github.com/aherne/php-sql-data-access-api/blob/master/src/StatementException.php) if execution fails! |
-
-Usage example:
-
-```php
-$connection = Lucinda\SQL\ConnectionFactory::getInstance("");
-$preparedStatement = $connection->preparedStatement();
-$preparedStatement->prepare("SELECT id FROM users WHERE name=:name");
-$preparedStatement->bind(":name", $name);
-$resultSet = $preparedStatement->execute();
-```
+| prepare | `string $query` | void | Prepares a query. Throws `Lucinda\SQL\StatementException` if preparation fails. |
+| bind | `string $parameter, string|int $value, int $dataType=PDO::PARAM_STR` | void | Binds one value to a prepared query. |
+| execute | `array $boundParameters=[]` | `Lucinda\SQL\StatementResults` | Executes the prepared query. Throws `Lucinda\SQL\StatementException` if execution fails. |
 
 ### Class Transaction
 
-[Lucinda\SQL\Transaction](https://github.com/aherne/php-sql-data-access-api/blob/master/src/Transaction.php) can wrap *execute* methods of two classes above in transactions, in order to maintain data integrity, and thus comes with following public methods:
+`Lucinda\SQL\Transaction` wraps PDO transaction operations.
 
 | Method | Arguments | Returns | Description |
 | --- | --- | --- | --- |
 | begin | void | void | Starts a transaction. |
-| commit | void | void | Commits transaction. |
-| rollback | void | void | Rolls back transaction. |
-
-Usage example:
-
-```php
-$connection = Lucinda\SQL\ConnectionFactory::getInstance("");
-$transaction = $connection->transaction();
-$transaction->begin();
-$connection->statement()->execute("UPDATE users SET name='John Doe' WHERE id=1");
-$transaction->commit();
-```
+| commit | void | void | Commits the active transaction. |
+| rollback | void | void | Rolls back the active transaction. |
+| isActive | void | bool | Checks whether PDO is currently inside a transaction. |
 
 ### Class StatementResults
 
-[Lucinda\SQL\StatementResults](https://github.com/aherne/php-sql-data-access-api/blob/master/src/StatementResults.php) encapsulates patterns of processing results of sql statement execution and comes with following public methods:
+`Lucinda\SQL\StatementResults` exposes common ways to read statement output.
 
 | Method | Arguments | Returns | Description |
-| --- | --- |---------| --- |
-| getInsertId | void | int     | Gets last insert id following INSERT statement execution. |
-| getAffectedRows | void | int     | Gets affected rows following UPDATE/DELETE statement execution. |
-| toValue | void | string  | Gets value of first column & row in resultset following SELECT statement execution. |
-| toRow | void | array   |false | Gets next row from resultset as column-value associative array following SELECT statement execution. |
-| toColumn | void | array   | Gets first column in resulting rows following SELECT statement execution. |
-| toMap | string $columnKeyName, string $columnValueName | array   | Gets two columns from resulting rows, where value of one becomes key and another as value, following SELECT statement execution. |
-| toList | void | array   | Gets all resulting rows, each as column-value associative array, following SELECT statement execution. |
+| --- | --- | --- | --- |
+| getInsertId | void | int | Returns the last inserted id. |
+| getAffectedRows | void | int | Returns affected rows from INSERT/UPDATE/DELETE statements. |
+| toValue | void | string | Returns first column of first row, or an empty string when none exists. |
+| toRow | void | array | Returns next row as an associative array, or an empty array when none exists. |
+| toColumn | void | array | Returns the first column of all remaining rows. |
+| toMap | `string $columnKeyName, string $columnValueName` | array | Returns rows as key/value pairs using two named columns. |
+| toList | void | array | Returns all remaining rows as associative arrays. |
 
-Usage examples of above methods can be seen below or in [unit tests](https://github.com/aherne/php-sql-data-access-api/blob/master/tests/StatementResultsTest.php)!
+### Exceptions
+
+| Class | Description |
+| --- | --- |
+| `Lucinda\SQL\ConfigurationException` | Thrown when XML configuration is invalid. |
+| `Lucinda\SQL\ConnectionException` | Thrown when opening or using a connection fails. Stores the related host name when available. |
+| `Lucinda\SQL\StatementException` | Thrown when preparing or executing SQL fails. Stores the related SQL query. |
+| `Lucinda\SQL\Exception` | Thrown for API usage errors. |

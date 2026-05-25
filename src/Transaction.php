@@ -47,4 +47,14 @@ class Transaction
     {
         $this->pdo->rollBack();
     }
+
+    /**
+     * Checks if we are in a transaction already.
+     * 
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->pdo->inTransaction();
+    }
 }

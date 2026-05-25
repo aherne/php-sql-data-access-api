@@ -1,38 +1,41 @@
 <?php
-
 namespace Test\Lucinda\SQL;
 
 use Lucinda\SQL\Connection;
 use Lucinda\SQL\DataSource;
-use Lucinda\UnitTest\Result;
+use Lucinda\UnitTest\Validator\Booleans;
+use Lucinda\UnitTest\Validator\Strings;
 
 class PreparedStatementTest
 {
-    private $object;
+    private Connection $connection;
 
     public function __construct()
     {
-        $connection = new Connection();
-        $connection->connect(new DataSource(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server));
-        $this->object = $connection->preparedStatement();
+        $xml = \simplexml_load_file(dirname(__DIR__)."/unit-tests.xml");
+        $this->connection = new Connection();
+        $this->connection->connect(new DataSource($xml->sql->local->server));
     }
 
     public function prepare()
     {
-        $this->object->prepare("SELECT first_name FROM users WHERE id=:id");
-        return new Result(true);
+        $statement = $this->connection->preparedStatement();
+        $statement->prepare("SELECT first_name FROM users WHERE id=:id");
+        return (new Booleans(true))->assertTrue();
     }
-
 
     public function bind()
     {
-        $this->object->bind(":id", 1, \PDO::PARAM_INT);
-        return new Result(true);
+        $statement = $this->connection->preparedStatement();
+        $statement->prepare("SELECT first_name FROM users WHERE id=:id");
+        $statement->bind(":id", 1, \PDO::PARAM_INT);
+        return (new Strings($statement->execute()->toValue()))->assertEquals("John");
     }
-
 
     public function execute()
     {
-        return new Result($this->object->execute()->toValue()=="John");
+        $statement = $this->connection->preparedStatement();
+        $statement->prepare("SELECT first_name FROM users WHERE id=:id");
+        return (new Strings($statement->execute([":id"=>1])->toValue()))->assertEquals("John");
     }
 }

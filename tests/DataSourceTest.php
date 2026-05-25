@@ -1,58 +1,67 @@
 <?php
-
 namespace Test\Lucinda\SQL;
 
 use Lucinda\SQL\DataSource;
-use Lucinda\UnitTest\Result;
+use Lucinda\UnitTest\Validator\Arrays;
+use Lucinda\UnitTest\Validator\Integers;
+use Lucinda\UnitTest\Validator\Strings;
 
 class DataSourceTest
 {
-    private $object;
+    private DataSource $object;
+    private DataSource $sqlite;
 
     public function __construct()
     {
-        $this->object = new DataSource(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server);
+        $xml = \simplexml_load_file(dirname(__DIR__)."/unit-tests.xml");
+        $this->object = new DataSource($xml->sql->local->server);
+        $this->sqlite = new DataSource(\simplexml_load_string(
+            '<server driver="sqlite" host="localhost" username="unit_test" password="" file=":memory:"/>'
+        ));
     }
-
 
     public function getDriverName()
     {
-        return new Result($this->object->getDriverName()=="mysql");
+        return (new Strings($this->object->getDriverName()))->assertEquals("mysql");
     }
 
     public function getDriverOptions()
     {
-        $options = $this->object->getDriverOptions();
-        return new Result($options == [] || $options == [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
+        return (new Arrays($this->object->getDriverOptions()))->assertContainsKey(\PDO::ATTR_ERRMODE);
     }
 
     public function getHost()
     {
-        return new Result($this->object->getHost()=="127.0.0.1");
+        return (new Strings($this->object->getHost()))->assertEquals("127.0.0.1");
     }
 
     public function getPort()
     {
-        return new Result($this->object->getPort()==3306);
+        return (new Integers($this->object->getPort()))->assertEquals(3306);
     }
 
     public function getUserName()
     {
-        return new Result($this->object->getUserName()=="unit_test");
+        return (new Strings($this->object->getUserName()))->assertEquals("unit_test");
     }
 
     public function getPassword()
     {
-        return new Result($this->object->getPassword()=="T3st_Password!");
+        return (new Strings($this->object->getPassword()))->assertEquals("T3st_Password!");
     }
 
     public function getSchema()
     {
-        return new Result($this->object->getSchema() == "unit_tests");
+        return (new Strings($this->object->getSchema()))->assertEquals("unit_tests");
     }
 
     public function getCharset()
     {
-        return new Result($this->object->getCharset() == "UTF8");
+        return (new Strings($this->object->getCharset()))->assertEquals("UTF8");
+    }
+
+    public function getFile()
+    {
+        return (new Strings($this->sqlite->getFile()))->assertEquals(":memory:");
     }
 }

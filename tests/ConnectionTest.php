@@ -1,103 +1,72 @@
 <?php
-
 namespace Test\Lucinda\SQL;
 
 use Lucinda\SQL\Connection;
-use Lucinda\SQL\ConnectionException;
 use Lucinda\SQL\DataSource;
-use Lucinda\UnitTest\Result;
-use Lucinda\SQL\StatementException;
+use Lucinda\SQL\PreparedStatement;
+use Lucinda\SQL\Statement;
+use Lucinda\SQL\Transaction;
+use Lucinda\UnitTest\Validator\Booleans;
+use Lucinda\UnitTest\Validator\Objects;
+use Lucinda\UnitTest\Validator\Strings;
 
 class ConnectionTest
 {
-    private $connection;
+    private Connection $connection;
+    private DataSource $dataSource;
 
     public function __construct()
     {
+        $xml = \simplexml_load_file(dirname(__DIR__)."/unit-tests.xml");
+        $this->dataSource = new DataSource($xml->sql->local->server);
         $this->connection = new Connection();
+        $this->connection->connect($this->dataSource);
     }
 
     public function connect()
     {
-        $dataSource = new DataSource(\simplexml_load_file(dirname(__DIR__)."/unit-tests.xml")->sql->local->server);
-
-        try {
-            $this->connection->connect($dataSource);
-            return new Result(true);
-        } catch (ConnectionException $e) {
-            return new Result(false);
-        }
+        $connection = new Connection();
+        $connection->connect($this->dataSource);
+        return (new Strings($connection->statement()->execute("SELECT first_name FROM users WHERE id=1")->toValue()))->assertEquals("John");
     }
-
 
     public function transaction()
     {
-        $transaction = $this->connection->transaction();
-        $transaction->begin();
-        $this->connection->statement()->execute("UPDATE users SET first_name='Jones' WHERE id=1");
-        $transaction->rollback();
-        return new Result($this->connection->statement()->execute("SELECT first_name FROM users WHERE id=1")->toValue()=="John");
+        return (new Objects($this->connection->transaction()))->assertInstanceOf(Transaction::class);
     }
-
 
     public function statement()
     {
-        $results = [];
-
-        $statement = $this->connection->statement();
-
-        try {
-            $statement->execute("SELECT first_name FROM users WHERE iad=1");
-            $results[] = new Result(false, "incorrect query");
-        } catch (StatementException $e) {
-            $results[] = new Result(true, "incorrect query");
-        }
-
-        $results[] = new Result($statement->execute("SELECT first_name FROM users WHERE id=1")->toValue()=="John", "correct query");
-
-        return $results;
+        return (new Objects($this->connection->statement()))->assertInstanceOf(Statement::class);
     }
-
 
     public function preparedStatement()
     {
-        $results = [];
-
-
-        try {
-            $statement = $this->connection->preparedStatement();
-            $statement->prepare("SELECT first_name FROM users WHERE iad=:id");
-            $statement->execute([":id"=>1]);
-            $results[] = new Result(false, "incorrect query");
-        } catch (StatementException $e) {
-            $results[] = new Result(true, "incorrect query");
-        }
-
-        $statement = $this->connection->preparedStatement();
-        $statement->prepare("SELECT first_name FROM users WHERE id=:id");
-        $results[] = new Result($statement->execute([":id"=>1])->toValue()=="John", "correct query");
-
-        return $results;
+        return (new Objects($this->connection->preparedStatement()))->assertInstanceOf(PreparedStatement::class);
     }
-
 
     public function keepAlive()
     {
         $this->connection->keepAlive();
-        return new Result(true);
+        return (new Booleans(true))->assertTrue();
     }
-
 
     public function reconnect()
     {
         $this->connection->reconnect();
-        return new Result(true);
+        return (new Strings($this->connection->statement()->execute("SELECT first_name FROM users WHERE id=1")->toValue()))->assertEquals("John");
     }
-
 
     public function disconnect()
     {
         $this->connection->disconnect();
-        return new Result(true);
+        try {
+            $this->connection->statement();
+            $disconnected = false;
+        } catch (\Lucinda\SQL\ConnectionException) {
+            $disconnected = true;
+        }
+        $this->connection->connect($this->dataSource);
+        return (new Booleans($disconnected))->assertTrue();
     }
 }

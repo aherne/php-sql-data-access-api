@@ -33,21 +33,9 @@ class Connection
     {
         // open connection
         try {
-            // defines settings to send to pdo driver
-            $settings = ":host=".$dataSource->getHost();
-            if ($dataSource->getPort()) {
-                $settings .= ";port=".$dataSource->getPort();
-            }
-            if ($dataSource->getSchema()) {
-                $settings .= ";dbname=".$dataSource->getSchema();
-            }
-            if ($dataSource->getCharset()) {
-                $settings .= ";charset=".$dataSource->getCharset();
-            }
-
             // performs connection to PDO
             $this->pdo = new PDO(
-                $dataSource->getDriverName().$settings,
+                $this->getDSN($dataSource),
                 $dataSource->getUserName(),
                 $dataSource->getPassword(),
                 $dataSource->getDriverOptions()
@@ -70,7 +58,7 @@ class Connection
      */
     public function transaction(): Transaction
     {
-        return new Transaction($this->pdo);
+        return new Transaction($this->getPDO());
     }
 
     /**
@@ -80,7 +68,7 @@ class Connection
      */
     public function statement(): Statement
     {
-        return new Statement($this->pdo);
+        return new Statement($this->getPDO());
     }
 
 
@@ -91,7 +79,7 @@ class Connection
      */
     public function preparedStatement(): PreparedStatement
     {
-        return new PreparedStatement($this->pdo);
+        return new PreparedStatement($this->getPDO());
     }
 
     /**
@@ -99,12 +87,46 @@ class Connection
      */
     public function keepAlive(): void
     {
-        $statement = new Statement($this->pdo);
+        $statement = new Statement($this->getPDO());
         try {
             $statement->execute("SELECT 1");
         } catch (StatementException) {
             $this->connect($this->dataSource);
         }
+    }
+
+    /**
+     * Gets PDO instance and checks if not disconnected already
+     * 
+     * @throws ConnectionException
+     * @return PDO
+     */
+    private function getPDO(): PDO
+    {
+        if ($this->pdo === null) {
+            throw new ConnectionException("Connection has already been disconnected!");
+        }
+        return $this->pdo;
+    }
+
+    private function getDSN(DataSource $dataSource): string
+    {
+        $settings = $dataSource->getDriverName().":host=".$dataSource->getHost();
+        if ($port = $dataSource->getPort()) {
+            $settings .= ";port=".$port;
+        }
+        if ($schema = $dataSource->getSchema()) {
+            $settings .= ";dbname=".$schema;
+        }
+        if ($charset = $dataSource->getCharset()) {
+            $settings .= ";charset=".$charset;
+        }
+        if ($file = $dataSource->getFile()) {
+            $settings .= ";".$file;
+        } else if ($dataSource->getDriverName() === "sqlite") {
+            throw new ConfigurationException("Attribute 'file' is mandatory for 'server' tag if valueof 'driver' is: sqlite");
+        }
+        return $settings;
     }
 
     /**

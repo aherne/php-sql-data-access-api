@@ -26,7 +26,7 @@ class PreparedStatement
      *
      * @var string $pendingStatement
      */
-    protected string $pendingStatement;
+    protected string $pendingStatement = "";
 
     /**
      * Creates a SQL prepared statement object automatically.
@@ -42,11 +42,20 @@ class PreparedStatement
      * Prepares a statement for execution.
      *
      * @param string $query
+     * @throws StatementException If prepare fails
      */
     public function prepare(string $query): void
     {
-        $this->pendingStatement=$query;
-        $this->pdoStatement = $this->pdo->prepare($query);
+        try {
+            $pdoStatement = $this->pdo->prepare($query);
+        } catch (\PDOException $e) {
+            $exception = new StatementException($e->getMessage(), (int) $e->getCode());
+            $exception->setQuery($query);
+            throw $exception;
+        }
+
+        $this->pendingStatement = $query;
+        $this->pdoStatement = $pdoStatement;
     }
 
     /**
@@ -73,7 +82,7 @@ class PreparedStatement
      * @throws Exception If developer tries to execute a query that wasn't prepared.
      * @throws StatementException If query execution fails.
      */
-    public function execute(array $boundParameters = array()): StatementResults
+    public function execute(array $boundParameters = []): StatementResults
     {
         if (!$this->pendingStatement) {
             throw new Exception("Cannot execute a statement that hasn't been prepared!");
