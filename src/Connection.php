@@ -109,8 +109,22 @@ class Connection
         return $this->pdo;
     }
 
+    /**
+     * Compiles a DSN for PDO.
+     * 
+     * @param DataSource $dataSource
+     * @throws ConfigurationException
+     * @return string
+     */
     private function getDSN(DataSource $dataSource): string
     {
+        if ($dataSource->getDriverName() === "sqlite") {
+            if (!$file = $dataSource->getFile()) {
+                throw new ConfigurationException("Attribute 'file' is mandatory for 'server' tag if value of 'driver' is: sqlite");
+            }
+            return "sqlite:".$file;
+        }
+        
         $settings = $dataSource->getDriverName().":host=".$dataSource->getHost();
         if ($port = $dataSource->getPort()) {
             $settings .= ";port=".$port;
@@ -120,11 +134,6 @@ class Connection
         }
         if ($charset = $dataSource->getCharset()) {
             $settings .= ";charset=".$charset;
-        }
-        if ($file = $dataSource->getFile()) {
-            $settings .= ";".$file;
-        } else if ($dataSource->getDriverName() === "sqlite") {
-            throw new ConfigurationException("Attribute 'file' is mandatory for 'server' tag if valueof 'driver' is: sqlite");
         }
         return $settings;
     }
