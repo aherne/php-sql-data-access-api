@@ -5,7 +5,7 @@ namespace Lucinda\SQL;
 /**
  * Exception thrown when connection to an SQL server fails
  */
-class ConnectionException extends \Exception
+final class ConnectionException extends \Exception
 {
     protected string $hostName="";
 

@@ -5,6 +5,6 @@ namespace Lucinda\SQL;
 /**
  * Exception thrown when XML is misconfigured
  */
-class ConfigurationException extends \Exception
+final class ConfigurationException extends \Exception
 {
 }

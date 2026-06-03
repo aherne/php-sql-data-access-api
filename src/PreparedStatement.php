@@ -5,7 +5,7 @@ namespace Lucinda\SQL;
 /**
  * Implements a database prepared statement on top of PDO.
  */
-class PreparedStatement
+final class PreparedStatement
 {
     /**
      * Variable containing an instance of PDO class.

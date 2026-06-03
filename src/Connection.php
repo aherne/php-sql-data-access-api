@@ -7,7 +7,7 @@ use PDO;
 /**
  * Implements a database connection on top of PDO.
  */
-class Connection
+final class Connection
 {
     /**
      * Variable containing an instance of PDO class.

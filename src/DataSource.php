@@ -5,7 +5,7 @@ namespace Lucinda\SQL;
 /**
  * Encapsulates connection information to an SQL server
  */
-class DataSource
+final class DataSource
 {
     private string $driverName;
     private string $host;

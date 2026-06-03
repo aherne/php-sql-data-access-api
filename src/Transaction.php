@@ -5,7 +5,7 @@ namespace Lucinda\SQL;
 /**
  * Encapsulates transaction operations on top of a PDO object
  */
-class Transaction
+final class Transaction
 {
     /**
      * Variable containing a PDO instance this class relies on.

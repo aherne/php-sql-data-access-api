@@ -5,7 +5,7 @@ namespace Lucinda\SQL;
 /**
  * Exception thrown when SQL statement executed is invalid.
  */
-class StatementException extends \Exception
+final class StatementException extends \Exception
 {
     protected string $query = "";
 
