@@ -26,16 +26,11 @@ The API is fully PSR-4 compliant and requires PHP 8.1+, SimpleXML, and PDO.
 
 ## Configuration
 
-Configuration is XML based. A **sql** tag contains one child tag per development environment:
+Configuration is XML based. A **sql** tag contains one or more **server** child tags, as this example shows:
 
 ```xml
 <sql>
-    <local>
-        <server name="main" driver="mysql" host="localhost" port="3306" username="root" password="" schema="example" charset="utf8"/>
-    </local>
-    <live>
-        <server name="main" driver="mysql" host="localhost" port="3306" username="hello" password="world" schema="example" charset="utf8"/>
-    </live>
+    <server name="main" driver="mysql" host="localhost" port="3306" username="hello" password="world" schema="example" charset="utf8">
 </sql>
 ```
 
@@ -82,10 +77,10 @@ Once configuration is ready, bootstrap the wrapper:
 ```php
 require __DIR__."/vendor/autoload.php";
 
-new Lucinda\SQL\Wrapper(simplexml_load_file("configuration.xml"), "local");
+new Lucinda\SQL\Wrapper(simplexml_load_file("configuration.xml"));
 ```
 
-This reads the current environment's **server** tags, converts them into `Lucinda\SQL\DataSource` objects, and registers them into `Lucinda\SQL\ConnectionFactory`.
+This reads the **server** tags, converts them into `Lucinda\SQL\DataSource` objects, and registers them into `Lucinda\SQL\ConnectionFactory`.
 
 Then retrieve a connection:
 
@@ -123,7 +118,7 @@ Create a configuration file and bootstrap it:
 ```php
 require __DIR__."/vendor/autoload.php";
 
-new Lucinda\SQL\Wrapper(simplexml_load_file("configuration.xml"), "local");
+new Lucinda\SQL\Wrapper(simplexml_load_file("configuration.xml"));
 
 $connection = Lucinda\SQL\ConnectionFactory::getInstance("");
 $users = $connection->statement()
