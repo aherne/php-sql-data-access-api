@@ -12,12 +12,11 @@ final class Wrapper
      * Binds SQL Data Access API to XML based on development environment and sets DataSource for later querying
      *
      * @param  \SimpleXMLElement $xml
-     * @param  string            $developmentEnvironment
      * @throws ConfigurationException If XML is improperly configured.
      */
-    public function __construct(\SimpleXMLElement $xml, $developmentEnvironment)
+    public function __construct(\SimpleXMLElement $xml)
     {
-        $xml = $xml->sql->{$developmentEnvironment};
+        $xml = $xml->sql;
         if (!empty($xml)) {
             if (!$xml->server) {
                 throw new ConfigurationException("Server not set for environment!");

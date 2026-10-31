@@ -18,7 +18,7 @@ class ConnectionTest
     public function __construct()
     {
         $xml = \simplexml_load_file(dirname(__DIR__)."/unit-tests.xml");
-        $this->dataSource = new DataSource($xml->sql->local->server);
+        $this->dataSource = new DataSource($xml->sql->server);
         $this->connection = new Connection();
         $this->connection->connect($this->dataSource);
     }

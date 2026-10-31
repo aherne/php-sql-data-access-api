@@ -14,7 +14,7 @@ class TransactionTest
     {
         $xml = \simplexml_load_file(dirname(__DIR__)."/unit-tests.xml");
         $this->connection = new Connection();
-        $this->connection->connect(new DataSource($xml->sql->local->server));
+        $this->connection->connect(new DataSource($xml->sql->server));
     }
 
     public function begin()

@@ -14,7 +14,7 @@ class DataSourceTest
     public function __construct()
     {
         $xml = \simplexml_load_file(dirname(__DIR__)."/unit-tests.xml");
-        $this->object = new DataSource($xml->sql->local->server);
+        $this->object = new DataSource($xml->sql->server);
         $this->sqlite = new DataSource(\simplexml_load_string(
             '<server driver="sqlite" host="localhost" username="unit_test" password="" file=":memory:"/>'
         ));
